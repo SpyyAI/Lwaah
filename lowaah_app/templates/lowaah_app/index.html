@@ -1,0 +1,127 @@
+{% extends 'lowaah_app/base.html' %}
+
+{% block title %}لوحة التحكم - Dashboard | Lowaah{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="welcome-banner">
+        <div class="welcome-content">
+            <h1>مرحباً بك في لواح</h1>
+            <h2>Welcome to Lowaah</h2>
+            <p>مساعدك الذكي للتعامل مع الخدمات الحكومية بلغة الإشارة السعودية</p>
+            <p class="subtitle-en">Your intelligent assistant for government services using Saudi Sign Language</p>
+        </div>
+        <div class="welcome-icon">
+            <i class="fas fa-hands"></i>
+        </div>
+    </div>
+
+    <!-- Profile Setup Banner -->
+    <div class="profile-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <div style="font-size: 64px; margin-bottom: 15px;">👤</div>
+        <h3 style="font-size: 32px; margin-bottom: 10px;">إعداد الملف الشخصي</h3>
+        <p style="font-size: 18px; margin-bottom: 25px; opacity: 0.9;">أنشئ ملفك الشخصي للوصول السريع للخدمات - مثل أبشر!</p>
+        <a href="{% url 'lowaah_app:profile_setup' %}" class="action-card" style="background: white; color: #667eea; display: inline-block; padding: 20px 50px; border-radius: 50px; font-size: 20px; font-weight: bold; text-decoration: none; transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+            <i class="fas fa-user-plus"></i>
+            إنشاء ملف شخصي - Create Profile
+        </a>
+    </div>
+
+    <div class="quick-actions">
+        <h3 style="text-align: center; font-size: 28px; margin-bottom: 25px;">الإجراءات السريعة - Quick Actions</h3>
+        <div class="actions-grid">
+            <a href="{% url 'lowaah_app:services' %}" class="action-card" style="transition: all 0.3s;">
+                <div class="action-icon" style="background: linear-gradient(135deg, #006837 0%, #004d2a 100%); font-size: 48px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border-radius: 20px; margin: 0 auto 15px;">
+                    🏢
+                </div>
+                <h4 style="font-size: 24px; margin-bottom: 8px;">خدماتي</h4>
+                <p style="font-size: 18px; color: #64748b;">My Services</p>
+            </a>
+            
+            <a href="{% url 'lowaah_app:violations' %}" class="action-card" style="transition: all 0.3s;">
+                <div class="action-icon" style="background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%); font-size: 48px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border-radius: 20px; margin: 0 auto 15px;">
+                    🚗
+                </div>
+                <h4 style="font-size: 24px; margin-bottom: 8px;">المخالفات</h4>
+                <p style="font-size: 18px; color: #64748b;">Violations</p>
+            </a>
+            
+            <a href="{% url 'lowaah_app:id_renewal' %}" class="action-card" style="transition: all 0.3s;">
+                <div class="action-icon" style="background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%); font-size: 48px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border-radius: 20px; margin: 0 auto 15px;">
+                    🆔
+                </div>
+                <h4 style="font-size: 24px; margin-bottom: 8px;">تجديد الهوية</h4>
+                <p style="font-size: 18px; color: #64748b;">ID Renewal</p>
+            </a>
+            
+            <a href="{% url 'lowaah_app:absher_individuals' %}" class="action-card" style="transition: all 0.3s;">
+                <div class="action-icon" style="background: linear-gradient(135deg, #f57c00 0%, #e65100 100%); font-size: 48px; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border-radius: 20px; margin: 0 auto 15px;">
+                    🏛️
+                </div>
+                <h4 style="font-size: 24px; margin-bottom: 8px;">أبشر أفراد</h4>
+                <p style="font-size: 18px; color: #64748b;">Absher Individuals</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="info-card">
+            <div class="info-header">
+                <i class="fas fa-sign-language"></i>
+                <h3>كيف يعمل لواح؟</h3>
+            </div>
+            <div class="info-content">
+                <ol>
+                    <li><strong>تفعيل الكاميرا:</strong> اضغط على أيقونة الكاميرا في الأعلى</li>
+                    <li><strong>استخدم الإيماءات:</strong> قم بعمل إيماءات لغة الإشارة السعودية</li>
+                    <li><strong>التنقل التلقائي:</strong> سيتم التنقل تلقائياً بناءً على إيماءاتك</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-header">
+                <i class="fas fa-hand-pointer"></i>
+                <h3>Gesture Guide</h3>
+            </div>
+            <div class="info-content">
+                <ol>
+                    <li><strong>Open Hand:</strong> Navigate to Services</li>
+                    <li><strong>Closed Fist:</strong> Go to Violations</li>
+                    <li><strong>Thumbs Up:</strong> Approve/Next</li>
+                    <li><strong>Thumbs Down:</strong> Cancel/Back</li>
+                    <li><strong>V Sign:</strong> Absher Individuals</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-section">
+        <div class="stat-box">
+            <i class="fas fa-check-circle"></i>
+            <div class="stat-content">
+                <h4>8+</h4>
+                <p>إيماءات مدعومة</p>
+                <p class="subtitle-en">Supported Gestures</p>
+            </div>
+        </div>
+        <div class="stat-box">
+            <i class="fas fa-clock"></i>
+            <div class="stat-content">
+                <h4>&lt;200ms</h4>
+                <p>وقت الاستجابة</p>
+                <p class="subtitle-en">Response Time</p>
+            </div>
+        </div>
+        <div class="stat-box">
+            <i class="fas fa-universal-access"></i>
+            <div class="stat-content">
+                <h4>100%</h4>
+                <p>إمكانية الوصول</p>
+                <p class="subtitle-en">Accessibility</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,245 @@
+{% extends 'lowaah_app/base.html' %}
+
+{% block title %}إصدار جواز السفر - Passport | Lowaah{% endblock %}
+
+{% block content %}
+<section class="passport-page">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-passport"></i>
+            إصدار جواز السفر - Passport Issuance
+        </h1>
+        <p>قدم طلب لإصدار أو تجديد جواز السفر - Apply for passport issuance or renewal</p>
+    </div>
+
+    <!-- Profile Auto-Fill Section -->
+    <div class="profile-autofill" id="profileAutofill" style="display: none;">
+        <div class="form-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
+            <h3 style="color: white;">
+                <i class="fas fa-user-check"></i>
+                استخدام الملف الشخصي - Use Saved Profile
+            </h3>
+            <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="font-size: 48px;">👤</div>
+                    <div>
+                        <div style="font-size: 24px; font-weight: bold;" id="profileName"></div>
+                        <div style="opacity: 0.9;" id="profileId"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-primary" onclick="useProfile()" style="background: white; color: #3b82f6;">
+                    <i class="fas fa-check"></i>
+                    استخدام هذا الملف - Use This Profile
+                </button>
+                <button type="button" class="btn-secondary" onclick="showManualForm()" style="background: rgba(255,255,255,0.2); color: white;">
+                    <i class="fas fa-keyboard"></i>
+                    إدخال يدوي - Manual Entry
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-container" id="manualFormContainer">
+        <div class="form-card">
+            <h3>معلومات الطلب - Application Information</h3>
+            <form id="passportForm">
+                <div class="form-group">
+                    <label for="nationalId">
+                        <i class="fas fa-id-card"></i>
+                        رقم الهوية الوطنية - National ID
+                    </label>
+                    <input type="text" id="nationalId" placeholder="1234567890" maxlength="10" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fullName">
+                        <i class="fas fa-user"></i>
+                        الاسم الكامل - Full Name
+                    </label>
+                    <input type="text" id="fullName" placeholder="أحمد محمد علي" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="birthDate">
+                            <i class="fas fa-calendar"></i>
+                            تاريخ الميلاد - Birth Date
+                        </label>
+                        <input type="date" id="birthDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">
+                            <i class="fas fa-venus-mars"></i>
+                            الجنس - Gender
+                        </label>
+                        <select id="gender" required>
+                            <option value="">اختر - Select</option>
+                            <option value="male">ذكر - Male</option>
+                            <option value="female">أنثى - Female</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="requestType">
+                        <i class="fas fa-file-alt"></i>
+                        نوع الطلب - Request Type
+                    </label>
+                    <select id="requestType" required>
+                        <option value="">اختر - Select</option>
+                        <option value="new">إصدار جديد - New Issuance</option>
+                        <option value="renewal">تجديد - Renewal</option>
+                        <option value="lost">بدل فاقد - Replacement (Lost)</option>
+                        <option value="damaged">بدل تالف - Replacement (Damaged)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="validityPeriod">
+                        <i class="fas fa-clock"></i>
+                        مدة الصلاحية - Validity Period
+                    </label>
+                    <select id="validityPeriod" required>
+                        <option value="">اختر - Select</option>
+                        <option value="5">5 سنوات - 5 Years (300 ريال)</option>
+                        <option value="10">10 سنوات - 10 Years (500 ريال)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile">
+                        <i class="fas fa-phone"></i>
+                        رقم الجوال - Mobile Number
+                    </label>
+                    <input type="tel" id="mobile" placeholder="05xxxxxxxx" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i>
+                        البريد الإلكتروني - Email
+                    </label>
+                    <input type="email" id="email" placeholder="email@example.com" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        تقديم الطلب - Submit Request
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="window.location.href='{% url 'lowaah_app:services' %}'">
+                        <i class="fas fa-arrow-right"></i>
+                        رجوع - Back
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h4><i class="fas fa-info-circle"></i> معلومات هامة - Important Information</h4>
+        <ul>
+            <li>📋 المستندات المطلوبة: صورة الهوية، صورة شخصية، إثبات سكن</li>
+            <li>💰 الرسوم: 300 ريال (5 سنوات) أو 500 ريال (10 سنوات)</li>
+            <li>⏱️ مدة الإصدار: 5-7 أيام عمل - Processing: 5-7 business days</li>
+            <li>📱 ستصلك رسالة نصية عند جاهزية الجواز - SMS notification when ready</li>
+            <li>🏢 الاستلام من فروع الجوازات أو التوصيل للمنزل</li>
+        </ul>
+    </div>
+</section>
+
+<script>
+let currentProfile = null;
+
+// Check for saved profile on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    const profileId = sessionStorage.getItem('selectedProfile');
+    
+    if (profileId) {
+        try {
+            const response = await fetch(`/api/profile/${profileId}/`);
+            if (response.ok) {
+                const data = await response.json();
+                currentProfile = data.profile;
+                showProfileAutofill(currentProfile);
+            } else {
+                showManualForm();
+            }
+        } catch (error) {
+            console.error('Error loading profile:', error);
+            showManualForm();
+        }
+    } else {
+        showManualForm();
+    }
+});
+
+function showProfileAutofill(profile) {
+    document.getElementById('profileAutofill').style.display = 'block';
+    document.getElementById('manualFormContainer').style.display = 'none';
+    
+    document.getElementById('profileName').textContent = profile.full_name;
+    document.getElementById('profileId').textContent = `🆔 ${profile.national_id}`;
+}
+
+function showManualForm() {
+    document.getElementById('profileAutofill').style.display = 'none';
+    document.getElementById('manualFormContainer').style.display = 'block';
+}
+
+function useProfile() {
+    if (!currentProfile) {
+        alert('خطأ: لم يتم العثور على الملف الشخصي');
+        return;
+    }
+    
+    document.getElementById('nationalId').value = currentProfile.national_id;
+    document.getElementById('fullName').value = currentProfile.full_name;
+    
+    showManualForm();
+}
+
+document.getElementById('passportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        nationalId: document.getElementById('nationalId').value,
+        fullName: document.getElementById('fullName').value,
+        requestType: document.getElementById('requestType').value,
+        validityPeriod: document.getElementById('validityPeriod').value
+    };
+    
+    // Use visual dialog
+    if (typeof visualDialog !== 'undefined') {
+        visualDialog.confirm({
+            icon: '🛂',
+            title: 'تأكيد طلب جواز السفر',
+            titleEn: 'Confirm Passport Request',
+            message: `الاسم: ${formData.fullName}\nالهوية: ${formData.nationalId}\nالمدة: ${formData.validityPeriod} سنوات`,
+            onYes: () => {
+                visualDialog.loading({
+                    icon: '⏳',
+                    title: 'جاري معالجة الطلب...',
+                    titleEn: 'Processing Request...'
+                });
+                
+                setTimeout(() => {
+                    visualDialog.close();
+                    window.location.href = '{% url "lowaah_app:success" %}';
+                }, 2000);
+            },
+            onNo: () => {
+                console.log('Request cancelled');
+            }
+        });
+    } else {
+        if (confirm('هل تريد تقديم الطلب؟\nDo you want to submit the request?')) {
+            window.location.href = '{% url "lowaah_app:success" %}';
+        }
+    }
+});
+</script>
+{% endblock %}

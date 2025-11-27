@@ -1,0 +1,617 @@
+/**
+ * ═══════════════════════════════════════════════════════
+ * ABSHER VOICE ASSISTANT - HEADER INTEGRATED DESIGN
+ * Clean, professional, embedded in header panel
+ * ═══════════════════════════════════════════════════════
+ */
+
+/* ─────────────────────────────────────────────────────── */
+/* HEADER INTEGRATION - Voice Assistant in Header         */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-assistant-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 16px;
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* MICROPHONE BUTTON - Clean Circular Design              */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-mic-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #009879 0%, #007A63 100%);
+    box-shadow: 
+        0 4px 12px rgba(0, 152, 121, 0.25),
+        0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.voice-mic-button:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 
+        0 6px 16px rgba(0, 152, 121, 0.35),
+        0 0 0 4px rgba(0, 152, 121, 0.1);
+}
+
+.voice-mic-button:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.voice-mic-button i {
+    font-size: 18px;
+    color: white;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* BUTTON STATES - Visual Feedback                        */
+/* ─────────────────────────────────────────────────────── */
+
+/* Idle State - Gray */
+.voice-mic-button.state-idle {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+/* Listening State - Blue with Pulse */
+.voice-mic-button.state-listening {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    animation: pulse-listening 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-listening {
+    0%, 100% {
+        box-shadow: 
+            0 4px 12px rgba(59, 130, 246, 0.4),
+            0 0 0 0 rgba(59, 130, 246, 0.6);
+    }
+    50% {
+        box-shadow: 
+            0 6px 16px rgba(59, 130, 246, 0.5),
+            0 0 0 8px rgba(59, 130, 246, 0);
+    }
+}
+
+/* Active State - Green */
+.voice-mic-button.state-active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    animation: pulse-active 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-active {
+    0%, 100% {
+        box-shadow: 
+            0 4px 12px rgba(16, 185, 129, 0.4),
+            0 0 0 0 rgba(16, 185, 129, 0.6);
+    }
+    50% {
+        box-shadow: 
+            0 6px 16px rgba(16, 185, 129, 0.5),
+            0 0 0 8px rgba(16, 185, 129, 0);
+    }
+}
+
+/* Processing State - Orange with Spin */
+.voice-mic-button.state-processing {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.voice-mic-button.state-processing i {
+    animation: spin-processing 1s linear infinite;
+}
+
+@keyframes spin-processing {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Error State - Red with Shake */
+.voice-mic-button.state-error {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    animation: shake-error 0.4s ease;
+}
+
+@keyframes shake-error {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* STATUS BADGE - Small Badge Below Button                */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-status-badge {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    color: #64748b;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.voice-mic-button.state-listening .voice-status-badge {
+    color: #3b82f6;
+    background: #eff6ff;
+}
+
+.voice-mic-button.state-active .voice-status-badge {
+    color: #10b981;
+    background: #f0fdf4;
+}
+
+.voice-mic-button.state-processing .voice-status-badge {
+    color: #f59e0b;
+    background: #fffbeb;
+}
+
+.voice-mic-button.state-error .voice-status-badge {
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* WAVEFORM OVERLAY - Full Width Visual Feedback          */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-waveform-overlay {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(59, 130, 246, 0.3) 50%, 
+        transparent 100%
+    );
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    z-index: 999;
+    padding: 0 50%;
+}
+
+.voice-waveform-overlay.show {
+    display: flex;
+}
+
+.voice-waveform-overlay span {
+    width: 3px;
+    height: 3px;
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+    border-radius: 2px;
+    animation: wave-bar 1.2s ease-in-out infinite;
+}
+
+.voice-waveform-overlay span:nth-child(1) { animation-delay: 0s; }
+.voice-waveform-overlay span:nth-child(2) { animation-delay: 0.15s; }
+.voice-waveform-overlay span:nth-child(3) { animation-delay: 0.3s; }
+.voice-waveform-overlay span:nth-child(4) { animation-delay: 0.15s; }
+.voice-waveform-overlay span:nth-child(5) { animation-delay: 0s; }
+
+@keyframes wave-bar {
+    0%, 100% { transform: scaleY(1); opacity: 0.6; }
+    50% { transform: scaleY(3); opacity: 1; }
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* HELP BUTTON - Clean Compact Button                     */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-help-button {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.voice-help-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35);
+}
+
+.voice-help-button i {
+    font-size: 13px;
+}
+
+.voice-help-button .help-text {
+    font-family: 'Cairo', sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* HELP PANEL - Clean Modal Card                          */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-help-panel {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    width: 340px;
+    max-width: calc(100vw - 48px);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.2),
+        0 0 1px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10000;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.voice-help-panel.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+.voice-help-panel h3 {
+    margin: 0 0 18px;
+    font-size: 17px;
+    color: #1f2937;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.voice-help-panel .help-close {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    background: #f1f5f9;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.voice-help-panel .help-close:hover {
+    background: #e2e8f0;
+    color: #1f2937;
+    transform: rotate(90deg);
+}
+
+.voice-help-panel .help-item {
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    font-size: 13px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.voice-help-panel .help-item:hover {
+    transform: translateX(-3px);
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.voice-help-panel .help-item strong {
+    display: block;
+    color: #009879;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.voice-help-panel .help-item span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* PERMISSION BANNER - Top Notification                   */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-permission-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    padding: 16px 24px;
+    text-align: center;
+    z-index: 10001;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: none;
+}
+
+.voice-permission-banner.show {
+    display: block;
+    animation: slide-down 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-down {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.voice-permission-banner h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.voice-permission-banner p {
+    margin: 0 0 12px;
+    font-size: 13px;
+    opacity: 0.95;
+}
+
+.voice-permission-banner button {
+    background: white;
+    color: #2563eb;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 6px;
+    transition: all 0.2s ease;
+}
+
+.voice-permission-banner button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.voice-permission-banner button.secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.voice-permission-banner button.secondary:hover {
+    border-color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* STATUS MESSAGE - Top Center Toast                      */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-status-message {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.92);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10001;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    min-width: 280px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.voice-status-message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.voice-status-message .status-icon {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 16px;
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* SCROLLBAR STYLING                                       */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-help-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.voice-help-panel::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.voice-help-panel::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.voice-help-panel::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* ACCESSIBILITY                                           */
+/* ─────────────────────────────────────────────────────── */
+
+.voice-mic-button:focus,
+.voice-help-button:focus,
+.voice-help-panel button:focus {
+    outline: 3px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* RESPONSIVE DESIGN                                       */
+/* ─────────────────────────────────────────────────────── */
+
+/* Tablets and Small Screens */
+@media (max-width: 1024px) {
+    .voice-help-button .help-text {
+        display: none;
+    }
+    
+    .voice-help-button {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+    }
+}
+
+/* Mobile Phones */
+@media (max-width: 768px) {
+    .voice-assistant-header {
+        gap: 8px;
+        margin-left: 8px;
+    }
+    
+    .voice-mic-button {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .voice-mic-button i {
+        font-size: 16px;
+    }
+    
+    .voice-help-button {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .voice-help-button i {
+        font-size: 14px;
+    }
+    
+    .voice-help-button .help-text {
+        display: none;
+    }
+    
+    .voice-status-badge {
+        font-size: 8px;
+        padding: 2px 6px;
+        bottom: -18px;
+    }
+    
+    .voice-help-panel {
+        top: 70px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-height: 400px;
+    }
+    
+    .voice-status-message {
+        width: calc(100% - 40px);
+        min-width: 0;
+        font-size: 13px;
+    }
+}
+
+/* Extra Small Phones */
+@media (max-width: 480px) {
+    .voice-mic-button {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .voice-mic-button i {
+        font-size: 15px;
+    }
+    
+    .voice-help-button {
+        width: 34px;
+        height: 34px;
+    }
+    
+    .voice-help-panel {
+        padding: 20px;
+    }
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* REDUCED MOTION (Accessibility)                         */
+/* ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .voice-mic-button,
+    .voice-help-button,
+    .voice-help-panel,
+    .voice-status-message,
+    .voice-permission-banner,
+    .voice-waveform-overlay span {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* HIGH CONTRAST MODE (Accessibility)                     */
+/* ─────────────────────────────────────────────────────── */
+
+@media (prefers-contrast: high) {
+    .voice-mic-button {
+        border: 2px solid currentColor;
+    }
+    
+    .voice-help-button {
+        border: 2px solid currentColor;
+    }
+}

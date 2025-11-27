@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Test - Lowaah</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        video {
+            width: 100%;
+            max-width: 640px;
+            background: black;
+            border: 2px solid #00a859;
+            border-radius: 8px;
+        }
+        .info-panel {
+            background: #16213e;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            border: 2px solid #00a859;
+        }
+        .log-box {
+            background: #0f1419;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #00a859;
+            padding-left: 10px;
+        }
+        button {
+            background: #00a859;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #008a47;
+        }
+        .status {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .detected {
+            color: #00ff88;
+            font-size: 24px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Lowaah Camera & Gesture Test</h1>
+        
+        <div>
+            <button id="startBtn" onclick="startCamera()">Start Camera</button>
+            <button id="stopBtn" onclick="stopCamera()" disabled>Stop Camera</button>
+            <button onclick="clearLogs()">Clear Logs</button>
+        </div>
+        
+        <div class="status">
+            Status: <span id="status">Not Started</span>
+        </div>
+        
+        <video id="video" autoplay playsinline></video>
+        
+        <div class="info-panel">
+            <h2>🤚 Current Detection</h2>
+            <div class="detected" id="detectedGesture">No gesture detected</div>
+            <div>Confidence: <span id="confidence">0%</span></div>
+            <div>API Calls: <span id="apiCalls">0</span></div>
+        </div>
+        
+        <div class="info-panel">
+            <h2>📋 Debug Logs</h2>
+            <div class="log-box" id="logBox"></div>
+        </div>
+        
+        <div class="info-panel">
+            <h2>📝 Instructions</h2>
+            <ul>
+                <li>Click "Start Camera" to begin</li>
+                <li>Allow camera permissions when prompted</li>
+                <li>Make these gestures clearly:
+                    <ul>
+                        <li>✋ Open Hand - All fingers spread</li>
+                        <li>✊ Closed Fist - All fingers closed</li>
+                        <li>👍 Thumbs Up - Thumb up, others closed</li>
+                        <li>👎 Thumbs Down - Thumb down, others closed</li>
+                        <li>☝️ Pointing - Only index finger extended</li>
+                        <li>✌️ Victory Sign - Index + middle fingers</li>
+                    </ul>
+                </li>
+                <li>Watch the logs to see what's detected</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        let videoElement = document.getElementById('video');
+        let stream = null;
+        let captureInterval = null;
+        let apiCallCount = 0;
+        
+        function log(message, type = 'info') {
+            const logBox = document.getElementById('logBox');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${timestamp}] ${message}`;
+            logBox.insertBefore(entry, logBox.firstChild);
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            document.getElementById('logBox').innerHTML = '';
+            log('Logs cleared');
+        }
+        
+        async function startCamera() {
+            try {
+                log('Requesting camera access...');
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        width: { ideal: 640 }, 
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    }
+                });
+                
+                videoElement.srcObject = stream;
+                document.getElementById('status').textContent = 'Camera Active';
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                
+                log('✅ Camera started successfully');
+                
+                // Start capturing and detecting
+                captureInterval = setInterval(captureAndDetect, 600);
+                log('Started gesture detection loop (every 600ms)');
+                
+            } catch (error) {
+                log(`❌ Camera error: ${error.message}`);
+                document.getElementById('status').textContent = 'Error';
+            }
+        }
+        
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            if (captureInterval) {
+                clearInterval(captureInterval);
+                captureInterval = null;
+            }
+            
+            videoElement.srcObject = null;
+            document.getElementById('status').textContent = 'Stopped';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            
+            log('🛑 Camera stopped');
+        }
+        
+        async function captureAndDetect() {
+            try {
+                // Create canvas to capture frame
+                const canvas = document.createElement('canvas');
+                canvas.width = videoElement.videoWidth;
+                canvas.height = videoElement.videoHeight;
+                
+                if (canvas.width === 0 || canvas.height === 0) {
+                    log('⚠️ Video not ready yet');
+                    return;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(videoElement, 0, 0);
+                
+                // Convert to base64
+                const frameData = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // Send to API
+                apiCallCount++;
+                document.getElementById('apiCalls').textContent = apiCallCount;
+                
+                const response = await fetch('/api/detect-gesture/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ frame: frameData })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.gesture) {
+                    const confidencePercent = (result.confidence * 100).toFixed(1);
+                    log(`✓ Detected: ${result.gesture} (${confidencePercent}%)`);
+                    
+                    document.getElementById('detectedGesture').textContent = result.gesture;
+                    document.getElementById('confidence').textContent = `${confidencePercent}%`;
+                } else {
+                    document.getElementById('detectedGesture').textContent = 'No gesture detected';
+                    document.getElementById('confidence').textContent = '0%';
+                }
+                
+            } catch (error) {
+                log(`❌ Detection error: ${error.message}`);
+            }
+        }
+        
+        // Initial log
+        log('Test page loaded. Click "Start Camera" to begin.');
+    </script>
+</body>
+</html>
+

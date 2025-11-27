@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}لواح - Lowaah | Saudi Sign Language Assistant{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/voice-assistant.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-hands"></i>
+                    <span class="logo-text">لواح</span>
+                    <span class="logo-subtitle">Lowaah</span>
+                </div>
+                
+                <nav class="main-nav">
+                    <a href="{% url 'lowaah_app:index' %}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                        <i class="fas fa-home"></i>
+                        <span>الرئيسية</span>
+                    </a>
+                    <a href="{% url 'lowaah_app:services' %}" class="nav-link {% if active_page == 'services' %}active{% endif %}">
+                        <i class="fas fa-th-large"></i>
+                        <span>الخدمات</span>
+                    </a>
+                    <a href="{% url 'lowaah_app:violations' %}" class="nav-link {% if active_page == 'violations' %}active{% endif %}">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>المخالفات</span>
+                    </a>
+                </nav>
+                
+                <div class="user-menu">
+                    <!-- Voice Assistant in Header -->
+                    <div class="voice-assistant-header">
+                        <button class="voice-help-button" onclick="voiceAssistant && voiceAssistant.toggleHelpPanel()" 
+                                title="المساعدة - Help"
+                                aria-label="عرض الأوامر الصوتية">
+                            <i class="fas fa-question-circle"></i>
+                            <span class="help-text">أوامر</span>
+                        </button>
+
+                        <button class="voice-mic-button state-idle" id="voiceIndicator" 
+                                onclick="voiceAssistant && voiceAssistant.manualActivate()"
+                                aria-label="مساعد صوتي - Voice Assistant"
+                                title="اضغط للتحدث - Click to speak"
+                                tabindex="0">
+                            <i class="fas fa-microphone"></i>
+                            <div class="voice-status-badge">جاهز</div>
+                        </button>
+                    </div>
+
+                    <button class="btn-icon" id="toggleCamera">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span>مستخدم</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Webcam Assistant Panel -->
+    <div class="camera-panel" id="cameraPanel">
+        <div class="camera-panel-header">
+            <h3>
+                <i class="fas fa-sign-language"></i>
+                مساعد لغة الإشارة - Sign Language Assistant
+            </h3>
+            <button class="btn-close" id="closeCameraPanel">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="camera-panel-body">
+            <div class="video-container">
+                <video id="webcam" autoplay playsinline></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+            <div class="detection-info">
+                <div class="gesture-display">
+                    <div class="gesture-label">الإيماءة المكتشفة:</div>
+                    <div class="gesture-value" id="gestureValue">جاري الانتظار...</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill"></div>
+                    </div>
+                    <div class="confidence-text" id="confidenceText">0%</div>
+                </div>
+                <div class="gesture-help">
+                    <h4 id="gestureHelpTitle">الإيماءات المتاحة:</h4>
+                    <ul id="gestureInstructions">
+                        <li><strong>🖐️ يد مفتوحة:</strong> الانتقال للخدمات</li>
+                        <li><strong>🤘 إشارة الروك:</strong> المخالفات</li>
+                        <li><strong>👍 إبهام لأعلى:</strong> موافق / التالي</li>
+                        <li><strong>👎 إبهام لأسفل:</strong> رجوع / إلغاء</li>
+                        <li><strong>☝️ إشارة السبابة:</strong> تحديد عنصر</li>
+                        <li><strong>✌️ علامة V:</strong> أبشر أفراد</li>
+                        <li><strong>👌 إشارة موافق:</strong> الملف الشخصي</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Microphone Permission Banner -->
+    <div class="voice-permission-banner" id="voicePermissionBanner">
+        <h3>🎤 نحتاج إذن المايكروفون</h3>
+        <p>للاستخدام الصوتي، نحتاج السماح باستخدام المايكروفون</p>
+        <p style="font-size: 12px;">We need microphone access to use voice commands</p>
+        <button onclick="voiceAssistant && voiceAssistant.requestPermission()">
+            السماح - Allow
+        </button>
+        <button class="secondary" onclick="voiceAssistant && voiceAssistant.hidePermissionBanner()">
+            ليس الآن - Not Now
+        </button>
+    </div>
+
+    <!-- Voice Status Message -->
+    <div class="voice-status-message" id="voiceStatusMessage"></div>
+
+    <!-- Voice Waveform (only shown when listening) -->
+    <div class="voice-waveform-overlay" id="voiceWaveform">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Help Panel -->
+    <div class="voice-help-panel" id="voiceHelpPanel">
+        <button class="help-close" onclick="voiceAssistant && voiceAssistant.toggleHelpPanel()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3>
+            <i class="fas fa-microphone-alt"></i>
+            الأوامر الصوتية
+        </h3>
+        
+        <div class="help-item">
+            <strong>🎤 كيف تستخدم:</strong>
+            1. انقر زر المايك الأخضر<br>
+            2. تحدث بوضوح<br>
+            3. سيتم التنفيذ تلقائياً
+        </div>
+
+        <div class="help-item">
+            <strong>🆔 تجديد الهوية</strong>
+            "تجديد الهوية" or "renew ID"
+        </div>
+
+        <div class="help-item">
+            <strong>⚠️ المخالفات</strong>
+            "المخالفات" or "violations"
+        </div>
+
+        <div class="help-item">
+            <strong>🛂 جواز السفر</strong>
+            "جواز السفر" or "passport"
+        </div>
+
+        <div class="help-item">
+            <strong>🚗 رخصة القيادة</strong>
+            "رخصة القيادة" or "driving license"
+        </div>
+
+        <div class="help-item">
+            <strong>🚙 تسجيل المركبة</strong>
+            "تسجيل المركبة" or "vehicle"
+        </div>
+
+        <div class="help-item">
+            <strong>💼 التوظيف</strong>
+            "التوظيف" or "employment"
+        </div>
+
+        <div class="help-item">
+            <strong>🏥 الصحة</strong>
+            "حجز موعد" or "health"
+        </div>
+
+        <div class="help-item">
+            <strong>🎓 التعليم</strong>
+            "التعليم" or "education"
+        </div>
+
+        <div class="help-item" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
+            <strong>💡 نصيحة:</strong>
+            انقر المايك وتحدث مباشرة!<br>
+            <small>Click mic and speak directly!</small>
+        </div>
+    </div>
+
+    <!-- Screen Reader Announcements -->
+    <div class="sr-only" role="status" aria-live="polite" id="voiceAnnouncement"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>لواح - Lowaah</h4>
+                    <p>مساعد لغة الإشارة السعودية للخدمات الحكومية</p>
+                    <p>Saudi Sign Language Assistant for Government Services</p>
+                </div>
+                <div class="footer-section">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="{% url 'lowaah_app:services' %}">الخدمات</a></li>
+                        <li><a href="{% url 'lowaah_app:violations' %}">المخالفات</a></li>
+                        <li><a href="{% url 'lowaah_app:id_renewal' %}">تجديد الهوية</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>تواصل معنا</h4>
+                    <p><i class="fas fa-phone"></i> 920000000</p>
+                    <p><i class="fas fa-envelope"></i> info@lowaah.sa</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Lowaah. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/visual-dialogs.js' %}"></script>
+    <script src="{% static 'js/camera.js' %}"></script>
+    <script src="{% static 'js/navigation.js' %}"></script>
+    <script src="{% static 'js/gesture-hint.js' %}"></script>
+    <script src="{% static 'js/service-click-fix.js' %}"></script>
+    <script src="{% static 'js/voice-assistant-continuous.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+    <!-- Voice Assistant Enhanced Controls -->
+    <script>
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + M = Toggle voice
+            if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+                e.preventDefault();
+                voiceAssistant && voiceAssistant.manualActivate();
+            }
+            
+            // Ctrl/Cmd + H = Toggle help
+            if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+                e.preventDefault();
+                voiceAssistant && voiceAssistant.toggleHelpPanel();
+            }
+            
+            // Escape = Stop listening / close help
+            if (e.key === 'Escape') {
+                if (voiceAssistant && voiceAssistant.isListening) {
+                    voiceAssistant.stopListening();
+                }
+                const helpPanel = document.getElementById('voiceHelpPanel');
+                if (helpPanel && helpPanel.classList.contains('show')) {
+                    voiceAssistant.toggleHelpPanel();
+                }
+            }
+        });
+
+        // Auto-show permission banner after 3 seconds if no permission
+        setTimeout(() => {
+            if (voiceAssistant && !voiceAssistant.hasPermission) {
+                const banner = document.getElementById('voicePermissionBanner');
+                if (banner) {
+                    banner.classList.add('show');
+                    
+                    // Auto-hide after 10 seconds
+                    setTimeout(() => {
+                        banner.classList.remove('show');
+                    }, 10000);
+                }
+            }
+        }, 3000);
+
+        // Touch gestures for mobile
+        const voiceIndicator = document.getElementById('voiceIndicator');
+        if (voiceIndicator) {
+            let touchStartTime = 0;
+            
+            voiceIndicator.addEventListener('touchstart', function(e) {
+                touchStartTime = Date.now();
+            });
+            
+            voiceIndicator.addEventListener('touchend', function(e) {
+                const touchDuration = Date.now() - touchStartTime;
+                
+                // Long press (500ms+) = Show help
+                if (touchDuration > 500) {
+                    e.preventDefault();
+                    voiceAssistant && voiceAssistant.toggleHelpPanel();
+                }
+            });
+        }
+
+        // Show keyboard shortcuts hint on first load
+        if (!localStorage.getItem('voice_shortcuts_shown')) {
+            setTimeout(() => {
+                if (voiceAssistant) {
+                    voiceAssistant.showStatus(
+                        'نصيحة: Ctrl+M للتحدث، Ctrl+H للمساعدة',
+                        'Tip: Ctrl+M to speak, Ctrl+H for help',
+                        '💡'
+                    );
+                    localStorage.setItem('voice_shortcuts_shown', 'true');
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,594 @@
+{% extends 'lowaah_app/base.html' %}
+{% load static %}
+
+{% block title %}إعداد الملف الشخصي - Profile Setup{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .profile-setup-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .setup-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .setup-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .setup-title {
+            font-size: 48px;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .setup-subtitle {
+            font-size: 24px;
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+
+        .form-section {
+            text-align: right;
+            margin-top: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 22px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 18px;
+            font-size: 20px;
+            border: 3px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s;
+            direction: rtl;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #006837;
+            box-shadow: 0 0 0 4px rgba(0, 104, 55, 0.1);
+        }
+
+        .btn-create {
+            background: linear-gradient(135deg, #006837 0%, #004d28 100%);
+            color: white;
+            padding: 20px 60px;
+            font-size: 28px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 104, 55, 0.3);
+        }
+
+        .btn-create:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            border-right: 5px solid #3b82f6;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: right;
+        }
+
+        .info-box h3 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .info-box p {
+            color: #64748b;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .car-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 3px dashed #e2e8f0;
+        }
+
+        .car-section h2 {
+            font-size: 36px;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .car-input-group {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn-skip {
+            background: #e2e8f0;
+            color: #64748b;
+            padding: 15px 40px;
+            font-size: 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 5px solid #f3f4f6;
+            border-top: 5px solid #006837;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Card Scanner Styles */
+        .scan-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 20px 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .scan-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scan-modal.active {
+            display: flex;
+        }
+
+        .scan-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+        }
+
+        .scan-video {
+            width: 100%;
+            border-radius: 10px;
+            background: #000;
+            margin-bottom: 20px;
+        }
+
+        .scan-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .scan-controls button {
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-capture {
+            background: #006837;
+            color: white;
+        }
+
+        .btn-close-scan {
+            background: #ef4444;
+            color: white;
+        }
+
+        .scan-hint {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .scan-canvas {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="profile-setup-container">
+        <div class="setup-card">
+            <div class="setup-icon">👤</div>
+            <h1 class="setup-title">إعداد الملف الشخصي</h1>
+            <p class="setup-subtitle">Profile Setup - One Profile for All Services</p>
+
+            <!-- Card Scanner Button -->
+            <button type="button" class="scan-button" id="openScannerBtn">
+                <i class="fas fa-camera"></i>
+                مسح البطاقة - Scan ID/License
+            </button>
+
+            <form id="profileForm" class="form-section">
+                <!-- Personal Information -->
+                <div class="form-group">
+                    <label for="fullName">
+                        <i class="fas fa-user"></i>
+                        الاسم الكامل - Full Name
+                    </label>
+                    <input type="text" id="fullName" name="fullName" 
+                           placeholder="أدخل الاسم الكامل" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nationalId">
+                        <i class="fas fa-id-card"></i>
+                        رقم الهوية - National ID
+                    </label>
+                    <input type="text" id="nationalId" name="nationalId" 
+                           placeholder="1234567890" pattern="[0-9]{10}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">
+                        <i class="fas fa-phone"></i>
+                        رقم الجوال - Phone Number (Optional)
+                    </label>
+                    <input type="tel" id="phone" name="phone" 
+                           placeholder="05xxxxxxxx" pattern="05[0-9]{8}">
+                </div>
+
+                <!-- Car Information (Optional) -->
+                <div class="car-section">
+                    <h2>🚗 معلومات السيارة (اختياري)</h2>
+                    <p class="setup-subtitle">Car Information (Optional)</p>
+
+                    <div class="car-input-group">
+                        <div class="form-group">
+                            <label for="plateLetters">الحروف - Letters</label>
+                            <input type="text" id="plateLetters" name="plateLetters" 
+                                   placeholder="أ ب ج" maxlength="3">
+                        </div>
+                        <div class="form-group">
+                            <label for="plateNumber">الأرقام - Numbers</label>
+                            <input type="text" id="plateNumber" name="plateNumber" 
+                                   placeholder="1234" pattern="[0-9]{1,4}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-create">
+                    <i class="fas fa-check-circle"></i>
+                    إنشاء الملف - Create Profile
+                </button>
+            </form>
+
+            <!-- Loading State -->
+            <div class="loading" id="loadingState">
+                <div class="spinner"></div>
+                <p style="margin-top: 20px; font-size: 20px; color: #64748b;">
+                    جاري الإنشاء... Creating...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scanner Modal -->
+    <div class="scan-modal" id="scanModal">
+        <div class="scan-container">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #1e3a8a;">
+                📷 مسح البطاقة - Scan Card
+            </h2>
+            <p class="scan-hint">
+                ضع البطاقة أمام الكاميرا بشكل واضح<br>
+                Place the card clearly in front of the camera
+            </p>
+            <video id="scanVideo" class="scan-video" autoplay playsinline></video>
+            <canvas id="scanCanvas" class="scan-canvas"></canvas>
+            <div class="scan-controls">
+                <button type="button" class="btn-capture" id="captureBtn">
+                    <i class="fas fa-camera"></i>
+                    التقاط - Capture
+                </button>
+                <button type="button" class="btn-close-scan" id="closeScanBtn">
+                    <i class="fas fa-times"></i>
+                    إغلاق - Close
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        const profileForm = document.getElementById('profileForm');
+        const loadingState = document.getElementById('loadingState');
+        
+        // Scanner elements
+        const openScannerBtn = document.getElementById('openScannerBtn');
+        const scanModal = document.getElementById('scanModal');
+        const scanVideo = document.getElementById('scanVideo');
+        const scanCanvas = document.getElementById('scanCanvas');
+        const captureBtn = document.getElementById('captureBtn');
+        const closeScanBtn = document.getElementById('closeScanBtn');
+        let scanStream = null;
+
+        // Open scanner
+        openScannerBtn.addEventListener('click', async () => {
+            try {
+                scanStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } // Use back camera if available
+                });
+                scanVideo.srcObject = scanStream;
+                scanModal.classList.add('active');
+                console.log('📷 Scanner opened');
+            } catch (error) {
+                console.error('Camera error:', error);
+                alert('تعذر فتح الكاميرا - Could not access camera');
+            }
+        });
+
+        // Close scanner
+        closeScanBtn.addEventListener('click', () => {
+            if (scanStream) {
+                scanStream.getTracks().forEach(track => track.stop());
+                scanStream = null;
+            }
+            scanModal.classList.remove('active');
+            console.log('📷 Scanner closed');
+        });
+
+        // Capture image and extract text
+        captureBtn.addEventListener('click', async () => {
+            // Capture image from video
+            scanCanvas.width = scanVideo.videoWidth;
+            scanCanvas.height = scanVideo.videoHeight;
+            const context = scanCanvas.getContext('2d');
+            context.drawImage(scanVideo, 0, 0);
+            
+            // Convert to base64
+            const imageData = scanCanvas.toDataURL('image/jpeg', 0.9);
+            
+            console.log('📸 Image captured, processing...');
+            
+            // Show loading
+            if (typeof showVisualDialog === 'function') {
+                showVisualDialog('loading', 'جاري المعالجة...', 'Processing card...');
+            }
+            
+            // Send to backend for OCR processing
+            try {
+                const response = await fetch('/api/extract-card-info/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ image: imageData })
+                });
+                
+                const result = await response.json();
+                console.log('📄 Extraction result:', result);
+                
+                if (result.success) {
+                    console.log('✅ Success! Filling form with:', result);
+                    
+                    // Auto-fill form with extracted data
+                    if (result.name) {
+                        document.getElementById('fullName').value = result.name;
+                        console.log('✓ Name filled:', result.name);
+                    }
+                    if (result.national_id) {
+                        document.getElementById('nationalId').value = result.national_id;
+                        console.log('✓ National ID filled:', result.national_id);
+                    }
+                    if (result.plate_letters) {
+                        document.getElementById('plateLetters').value = result.plate_letters;
+                        console.log('✓ Plate letters filled:', result.plate_letters);
+                    }
+                    if (result.plate_number) {
+                        document.getElementById('plateNumber').value = result.plate_number;
+                        console.log('✓ Plate number filled:', result.plate_number);
+                    }
+                    
+                    // Close scanner
+                    closeScanBtn.click();
+                    
+                    // Show success message
+                    let message = result.message || 'تم استخراج البيانات!';
+                    
+                    // Check if demo mode
+                    if (result.demo_mode) {
+                        message = '⚠️ وضع التجربة\n' + 
+                                 'بيانات تجريبية - لقراءة البطاقة الفعلية:\n' +
+                                 'قم بتثبيت Tesseract OCR\n\n' +
+                                 'Demo Mode - For real scanning:\n' +
+                                 'Install Tesseract OCR';
+                    }
+                    
+                    if (typeof showVisualDialog === 'function') {
+                        showVisualDialog('success', result.demo_mode ? '⚠️ وضع التجربة' : 'تم! ✅', message);
+                    } else {
+                        alert((result.demo_mode ? '⚠️ ' : '✅ ') + message);
+                    }
+                    
+                    console.log('✅ Form auto-filled successfully!');
+                } else {
+                    if (typeof showVisualDialog === 'function') {
+                        showVisualDialog('error', 'خطأ', result.error || 'Could not extract information');
+                    } else {
+                        alert('⚠️ تعذر استخراج المعلومات');
+                    }
+                }
+            } catch (error) {
+                console.error('Extraction error:', error);
+                if (typeof showVisualDialog === 'function') {
+                    showVisualDialog('error', 'خطأ', 'Failed to process card');
+                } else {
+                    alert('❌ فشلت معالجة البطاقة');
+                }
+            }
+        });
+
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get form data
+            const formData = {
+                full_name: document.getElementById('fullName').value,
+                national_id: document.getElementById('nationalId').value,
+                phone: document.getElementById('phone').value || '',
+                plate_letters: document.getElementById('plateLetters').value || '',
+                plate_number: document.getElementById('plateNumber').value || ''
+            };
+
+            console.log('📤 Submitting profile data:', formData);
+
+            // Show loading
+            profileForm.style.display = 'none';
+            loadingState.classList.add('show');
+
+            try {
+                // Create profile
+                const response = await fetch('/api/profile/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                console.log('📥 Response:', result);
+
+                if (response.ok) {
+                    // Success!
+                    console.log('✅ Profile created successfully');
+                    
+                    // Store profile ID in session
+                    sessionStorage.setItem('userProfileId', result.profile_id);
+                    
+                    // Show success and redirect
+                    if (typeof showVisualDialog === 'function') {
+                        showVisualDialog('success', 'تم إنشاء الملف بنجاح!', 'Profile created successfully!');
+                    }
+                    
+                    setTimeout(() => {
+                        window.location.href = '/services/';
+                    }, 1500);
+                } else {
+                    throw new Error(result.error || 'Failed to create profile');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                
+                // Hide loading
+                loadingState.classList.remove('show');
+                profileForm.style.display = 'block';
+                
+                // Show error
+                if (typeof showVisualDialog === 'function') {
+                    showVisualDialog('error', 'حدث خطأ', error.message);
+                } else {
+                    alert('Error: ' + error.message);
+                }
+            }
+        });
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        console.log('✅ Profile setup page loaded');
+    </script>
+{% endblock %}
+

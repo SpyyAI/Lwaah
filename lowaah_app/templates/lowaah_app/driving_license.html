@@ -1,0 +1,273 @@
+{% extends 'lowaah_app/base.html' %}
+
+{% block title %}رخصة القيادة - Driving License | Lowaah{% endblock %}
+
+{% block content %}
+<section class="driving-license-page">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-car"></i>
+            رخصة القيادة - Driving License
+        </h1>
+        <p>إصدار أو تجديد رخصة القيادة - Driving license issuance or renewal</p>
+    </div>
+
+    <!-- Profile Auto-Fill Section -->
+    <div class="profile-autofill" id="profileAutofill" style="display: none;">
+        <div class="form-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+            <h3 style="color: white;">
+                <i class="fas fa-user-check"></i>
+                استخدام الملف الشخصي - Use Saved Profile
+            </h3>
+            <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="font-size: 48px;">👤</div>
+                    <div>
+                        <div style="font-size: 24px; font-weight: bold;" id="profileName"></div>
+                        <div style="opacity: 0.9;" id="profileId"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-primary" onclick="useProfile()" style="background: white; color: #f59e0b;">
+                    <i class="fas fa-check"></i>
+                    استخدام هذا الملف - Use This Profile
+                </button>
+                <button type="button" class="btn-secondary" onclick="showManualForm()" style="background: rgba(255,255,255,0.2); color: white;">
+                    <i class="fas fa-keyboard"></i>
+                    إدخال يدوي - Manual Entry
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-container" id="manualFormContainer">
+        <div class="form-card">
+            <h3>معلومات الرخصة - License Information</h3>
+            <form id="licenseForm">
+                <div class="form-group">
+                    <label for="nationalId">
+                        <i class="fas fa-id-card"></i>
+                        رقم الهوية الوطنية - National ID
+                    </label>
+                    <input type="text" id="nationalId" placeholder="1234567890" maxlength="10" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceType">
+                        <i class="fas fa-clipboard-list"></i>
+                        نوع الخدمة - Service Type
+                    </label>
+                    <select id="serviceType" required onchange="updateServiceFields()">
+                        <option value="">اختر - Select</option>
+                        <option value="renew">تجديد رخصة - License Renewal</option>
+                        <option value="new">إصدار رخصة جديدة - New License</option>
+                        <option value="replacement">بدل فاقد/تالف - Replacement</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="licenseNumberGroup" style="display: none;">
+                    <label for="licenseNumber">
+                        <i class="fas fa-certificate"></i>
+                        رقم الرخصة - License Number
+                    </label>
+                    <input type="text" id="licenseNumber" placeholder="12345678">
+                </div>
+
+                <div class="form-group">
+                    <label for="licenseType">
+                        <i class="fas fa-th-list"></i>
+                        نوع الرخصة - License Type
+                    </label>
+                    <select id="licenseType" required>
+                        <option value="">اختر - Select</option>
+                        <option value="private">خاصة - Private</option>
+                        <option value="public">عامة - Public</option>
+                        <option value="motorcycle">دراجة نارية - Motorcycle</option>
+                        <option value="truck">شاحنة صغيرة - Small Truck</option>
+                        <option value="heavy">مركبات ثقيلة - Heavy Vehicles</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="renewalPeriod">
+                        <i class="fas fa-calendar-alt"></i>
+                        مدة التجديد - Renewal Period
+                    </label>
+                    <select id="renewalPeriod" required>
+                        <option value="">اختر - Select</option>
+                        <option value="1">سنة واحدة - 1 Year (150 ريال)</option>
+                        <option value="2">سنتان - 2 Years (300 ريال)</option>
+                        <option value="5">5 سنوات - 5 Years (400 ريال)</option>
+                        <option value="10">10 سنوات - 10 Years (600 ريال)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile">
+                        <i class="fas fa-phone"></i>
+                        رقم الجوال - Mobile Number
+                    </label>
+                    <input type="tel" id="mobile" placeholder="05xxxxxxxx" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i>
+                        تقديم الطلب - Submit Request
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="window.location.href='{% url 'lowaah_app:services' %}'">
+                        <i class="fas fa-arrow-right"></i>
+                        رجوع - Back
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="info-box" style="background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);">
+        <h4><i class="fas fa-info-circle"></i> معلومات هامة - Important Information</h4>
+        <ul>
+            <li>🏥 <strong>الفحص الطبي مطلوب</strong> - Medical examination required before renewal</li>
+            <li>📋 المستندات: صورة الهوية، صورة شخصية، شهادة الفحص الطبي</li>
+            <li>💰 الرسوم تختلف حسب نوع الرخصة ومدة التجديد</li>
+            <li>⏱️ مدة الإصدار: 3-5 أيام عمل - Processing: 3-5 business days</li>
+            <li>📱 تصلك رسالة نصية عند جاهزية الرخصة - SMS when ready</li>
+            <li>🚗 يمكن طباعة الرخصة من الموقع مؤقتاً</li>
+        </ul>
+    </div>
+
+    <div class="info-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
+        <h4><i class="fas fa-th-large"></i> أنواع الرخص المتاحة - Available License Types</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+            <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🚗</div>
+                <strong>رخصة خاصة</strong>
+                <div style="font-size: 0.9em; opacity: 0.8;">Private License</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🚕</div>
+                <strong>رخصة عامة</strong>
+                <div style="font-size: 0.9em; opacity: 0.8;">Public License</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🏍️</div>
+                <strong>دراجة نارية</strong>
+                <div style="font-size: 0.9em; opacity: 0.8;">Motorcycle</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🚚</div>
+                <strong>شاحنة</strong>
+                <div style="font-size: 0.9em; opacity: 0.8;">Truck</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+let currentProfile = null;
+
+document.addEventListener('DOMContentLoaded', async function() {
+    const profileId = sessionStorage.getItem('selectedProfile');
+    
+    if (profileId) {
+        try {
+            const response = await fetch(`/api/profile/${profileId}/`);
+            if (response.ok) {
+                const data = await response.json();
+                currentProfile = data.profile;
+                showProfileAutofill(currentProfile);
+            } else {
+                showManualForm();
+            }
+        } catch (error) {
+            console.error('Error loading profile:', error);
+            showManualForm();
+        }
+    } else {
+        showManualForm();
+    }
+});
+
+function showProfileAutofill(profile) {
+    document.getElementById('profileAutofill').style.display = 'block';
+    document.getElementById('manualFormContainer').style.display = 'none';
+    
+    document.getElementById('profileName').textContent = profile.full_name;
+    document.getElementById('profileId').textContent = `🆔 ${profile.national_id}`;
+}
+
+function showManualForm() {
+    document.getElementById('profileAutofill').style.display = 'none';
+    document.getElementById('manualFormContainer').style.display = 'block';
+}
+
+function useProfile() {
+    if (!currentProfile) {
+        alert('خطأ: لم يتم العثور على الملف الشخصي');
+        return;
+    }
+    
+    document.getElementById('nationalId').value = currentProfile.national_id;
+    showManualForm();
+}
+
+function updateServiceFields() {
+    const serviceType = document.getElementById('serviceType').value;
+    const licenseNumberGroup = document.getElementById('licenseNumberGroup');
+    
+    if (serviceType === 'renew' || serviceType === 'replacement') {
+        licenseNumberGroup.style.display = 'block';
+        document.getElementById('licenseNumber').required = true;
+    } else {
+        licenseNumberGroup.style.display = 'none';
+        document.getElementById('licenseNumber').required = false;
+    }
+}
+
+document.getElementById('licenseForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        nationalId: document.getElementById('nationalId').value,
+        serviceType: document.getElementById('serviceType').value,
+        licenseType: document.getElementById('licenseType').value,
+        renewalPeriod: document.getElementById('renewalPeriod').value
+    };
+    
+    const serviceNames = {
+        'renew': 'تجديد الرخصة',
+        'new': 'إصدار رخصة جديدة',
+        'replacement': 'بدل فاقد/تالف'
+    };
+    
+    if (typeof visualDialog !== 'undefined') {
+        visualDialog.confirm({
+            icon: '🚗',
+            title: 'تأكيد طلب رخصة القيادة',
+            titleEn: 'Confirm License Request',
+            message: `${serviceNames[formData.serviceType]}\nالهوية: ${formData.nationalId}\nالمدة: ${formData.renewalPeriod} سنة`,
+            onYes: () => {
+                visualDialog.loading({
+                    icon: '⏳',
+                    title: 'جاري معالجة الطلب...',
+                    titleEn: 'Processing Request...'
+                });
+                
+                setTimeout(() => {
+                    visualDialog.close();
+                    window.location.href = '{% url "lowaah_app:success" %}';
+                }, 2000);
+            },
+            onNo: () => {
+                console.log('Request cancelled');
+            }
+        });
+    } else {
+        if (confirm('هل تريد تقديم الطلب؟\nDo you want to submit the request?')) {
+            window.location.href = '{% url "lowaah_app:success" %}';
+        }
+    }
+});
+</script>
+{% endblock %}

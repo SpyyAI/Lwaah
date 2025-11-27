@@ -1,0 +1,122 @@
+{% extends 'lowaah_app/base.html' %}
+
+{% block title %}الخدمات - Services | Lowaah{% endblock %}
+
+{% block content %}
+<section class="services-page">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-th-large"></i>
+            الخدمات - My Services
+        </h1>
+        <p>استعرض جميع الخدمات المتاحة - Browse all available services</p>
+    </div>
+
+    <div class="services-grid">
+        <div class="service-card" data-service="violations">
+            <div class="service-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>الاستعلام عن المخالفات</h3>
+            <p>Violations Inquiry</p>
+            <p class="service-desc">استعلم عن المخالفات المرورية وسددها</p>
+            <a href="{% url 'lowaah_app:violations' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="service-card" data-service="id-renewal">
+            <div class="service-icon">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h3>تجديد بطاقة الهوية</h3>
+            <p>ID Card Renewal</p>
+            <p class="service-desc">جدد بطاقة الهوية الوطنية إلكترونياً</p>
+            <a href="{% url 'lowaah_app:id_renewal' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="service-card" data-service="passport">
+            <div class="service-icon">
+                <i class="fas fa-passport"></i>
+            </div>
+            <h3>إصدار جواز السفر</h3>
+            <p>Passport Issuance</p>
+            <p class="service-desc">قدم طلب لإصدار أو تجديد جواز السفر</p>
+            <a href="{% url 'lowaah_app:passport' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="service-card" data-service="driving-license">
+            <div class="service-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <h3>رخصة القيادة</h3>
+            <p>Driving License</p>
+            <p class="service-desc">إصدار أو تجديد رخصة القيادة</p>
+            <a href="{% url 'lowaah_app:driving_license' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="service-card" data-service="vehicle-registration">
+            <div class="service-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h3>تسجيل المركبات</h3>
+            <p>Vehicle Registration</p>
+            <p class="service-desc">تسجيل ونقل ملكية المركبات</p>
+            <a href="{% url 'lowaah_app:vehicle_registration' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="service-card" data-service="employment">
+            <div class="service-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <h3>الخدمات الوظيفية</h3>
+            <p>Employment Services</p>
+            <p class="service-desc">خدمات التوظيف والعمل</p>
+            <a href="{% url 'lowaah_app:employment' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="service-card" data-service="health">
+            <div class="service-icon">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h3>الخدمات الصحية</h3>
+            <p>Health Services</p>
+            <p class="service-desc">حجز المواعيد والسجلات الصحية</p>
+            <a href="{% url 'lowaah_app:health' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="service-card" data-service="education">
+            <div class="service-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h3>الخدمات التعليمية</h3>
+            <p>Education Services</p>
+            <p class="service-desc">خدمات التعليم والشهادات</p>
+            <a href="{% url 'lowaah_app:education' %}" class="btn-service">
+                الدخول للخدمة
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

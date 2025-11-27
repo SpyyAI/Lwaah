@@ -1,0 +1,83 @@
+{% extends 'lowaah_app/base.html' %}
+
+{% block title %}تم بنجاح - Success | Lowaah{% endblock %}
+
+{% block content %}
+<section class="success-page">
+    <div class="success-container">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h1>تم بنجاح!</h1>
+        <h2>Success!</h2>
+        
+        <p class="success-message">
+            تم تنفيذ العملية بنجاح. سيتم إرسال تفاصيل الطلب إلى رقم الجوال والبريد الإلكتروني المسجل.
+        </p>
+        <p class="success-message-en">
+            The operation was completed successfully. Request details will be sent to your registered mobile number and email.
+        </p>
+
+        <div class="success-details">
+            <div class="detail-item">
+                <i class="fas fa-calendar"></i>
+                <div>
+                    <strong>التاريخ - Date</strong>
+                    <p id="currentDate"></p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-hashtag"></i>
+                <div>
+                    <strong>رقم المرجع - Reference Number</strong>
+                    <p id="referenceNumber"></p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <strong>الوقت - Time</strong>
+                    <p id="currentTime"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-actions">
+            <a href="{% url 'lowaah_app:index' %}" class="btn-primary">
+                <i class="fas fa-home"></i>
+                العودة للرئيسية - Back to Home
+            </a>
+            <a href="{% url 'lowaah_app:services' %}" class="btn-secondary">
+                <i class="fas fa-th-large"></i>
+                الخدمات - Services
+            </a>
+            <button class="btn-secondary" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                طباعة - Print
+            </button>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <p>
+                يمكنك متابعة حالة الطلب من خلال قسم "طلباتي" أو عبر رقم المرجع المذكور أعلاه.
+            </p>
+            <p class="subtitle-en">
+                You can track your request status through "My Requests" section or using the reference number above.
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+// Set current date and time
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('ar-SA');
+document.getElementById('currentTime').textContent = new Date().toLocaleTimeString('ar-SA');
+
+// Generate random reference number
+const refNumber = 'REF-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+document.getElementById('referenceNumber').textContent = refNumber;
+</script>
+{% endblock %}
+

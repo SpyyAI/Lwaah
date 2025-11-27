@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Button Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 2px solid #006837;
+            background: #006837;
+            color: white;
+        }
+        button:hover {
+            background: #005028;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        #log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 20px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Camera Button Test</h1>
+        
+        <div id="status" class="status info">Waiting for test...</div>
+        
+        <button id="testButton1" onclick="testClick('Button 1 - Inline onclick')">
+            Test Button 1 (Inline onclick)
+        </button>
+        
+        <button id="testButton2">
+            Test Button 2 (addEventListener)
+        </button>
+        
+        <button id="testButton3">
+            Test Button 3 (Direct onclick)
+        </button>
+        
+        <button id="toggleCamera" type="button">
+            🎥 Test Camera Button (Same ID as real button)
+        </button>
+        
+        <div id="cameraPanel" style="display:none; padding: 20px; background: #e0e0e0; margin-top: 20px; border-radius: 5px;">
+            <h3>Camera Panel Activated! ✅</h3>
+            <p>If you see this, the button is working!</p>
+        </div>
+        
+        <h3>Console Log:</h3>
+        <div id="log"></div>
+        
+        <button onclick="clearLog()" style="background: #dc3545;">Clear Log</button>
+    </div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        const statusDiv = document.getElementById('status');
+        let logCount = 0;
+        
+        function log(message, type = 'info') {
+            logCount++;
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${time}] ${logCount}. ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLog() {
+            logDiv.innerHTML = '';
+            logCount = 0;
+        }
+        
+        function testClick(source) {
+            log(`✅ ${source} clicked!`, 'success');
+            statusDiv.className = 'status success';
+            statusDiv.textContent = `✅ ${source} works!`;
+        }
+        
+        // Test 2: addEventListener
+        document.getElementById('testButton2').addEventListener('click', function() {
+            testClick('Button 2 - addEventListener');
+        });
+        
+        // Test 3: Direct onclick
+        document.getElementById('testButton3').onclick = function() {
+            testClick('Button 3 - Direct onclick');
+        };
+        
+        // Camera button test
+        log('🚀 Starting camera button test...');
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            log('📄 DOM Content Loaded');
+            
+            const cameraBtn = document.getElementById('toggleCamera');
+            const cameraPanel = document.getElementById('cameraPanel');
+            
+            if (cameraBtn) {
+                log('✅ Camera button found with ID: toggleCamera');
+                
+                // Method 1: addEventListener
+                cameraBtn.addEventListener('click', function() {
+                    log('🖱️ Camera button clicked via addEventListener!');
+                    if (cameraPanel) {
+                        cameraPanel.style.display = cameraPanel.style.display === 'none' ? 'block' : 'none';
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = '✅ Camera button works perfectly!';
+                    }
+                });
+                
+                // Method 2: Direct onclick (backup)
+                cameraBtn.onclick = function() {
+                    log('🖱️ Camera button clicked via onclick!');
+                };
+                
+                log('✅ Click listeners attached to camera button');
+            } else {
+                log('❌ Camera button NOT found!');
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Camera button not found!';
+            }
+        });
+        
+        log('📝 Script loaded');
+        
+        // Test button existence before DOM ready
+        setTimeout(() => {
+            const btn = document.getElementById('toggleCamera');
+            log(`🔍 Button check: ${btn ? 'EXISTS' : 'NOT FOUND'}`);
+            if (btn) {
+                log(`   - Tag: ${btn.tagName}`);
+                log(`   - Type: ${btn.type}`);
+                log(`   - ID: ${btn.id}`);
+            }
+        }, 100);
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,491 @@
+{% extends 'lowaah_app/base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title|default:"اختر الملف الشخصي - Lowaah" }}{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .profile-selection-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .page-header .subtitle {
+            font-size: 24px;
+            color: #64748b;
+        }
+
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .profile-card.selected {
+            border: 5px solid #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .profile-id {
+            font-size: 18px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .gesture-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .new-profile-card {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .new-profile-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .new-profile-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .instructions {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 40px;
+            border-left: 5px solid #3b82f6;
+        }
+
+        .instructions h2 {
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 18px;
+        }
+
+        .instructions li:last-child {
+            border-bottom: none;
+        }
+
+        .gesture-icon {
+            font-size: 32px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e3a8a;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="profile-selection-container">
+        <div class="page-header">
+            <h1>👤 اختر ملفك الشخصي</h1>
+            <p class="subtitle">Select Your Profile</p>
+        </div>
+
+        <div class="profiles-grid" id="profilesGrid">
+            {% if profiles %}
+                {% for profile in profiles %}
+                <div class="profile-card" data-profile-id="{{ profile.profile_id }}" data-index="{{ forloop.counter0 }}">
+                    <div class="gesture-indicator">
+                        {% if forloop.counter0 == 0 %}☝️
+                        {% elif forloop.counter0 == 1 %}✌️
+                        {% elif forloop.counter0 == 2 %}🖖
+                        {% endif %}
+                    </div>
+                    <div class="profile-picture">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="{{ profile.full_name }}">
+                        {% else %}
+                            👤
+                        {% endif %}
+                    </div>
+                    <div class="profile-name">{{ profile.full_name }}</div>
+                    <div class="profile-id">🆔 {{ profile.national_id }}</div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span>🚗</span>
+                            <span>{{ profile.car_plates.count }} سيارات</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="profile-card new-profile-card">
+                    <div class="new-profile-icon">➕</div>
+                    <div class="new-profile-text">لا توجد ملفات شخصية</div>
+                    <div class="new-profile-text">انشئ ملفك الأول</div>
+                </div>
+            {% endif %}
+            
+            <!-- Always show "Create New" option -->
+            <div class="profile-card new-profile-card" id="createNewProfile" data-index="new">
+                <div class="gesture-indicator">👌</div>
+                <div class="new-profile-icon">➕</div>
+                <div class="new-profile-text">إنشاء ملف جديد</div>
+                <div class="new-profile-text">Create New Profile</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h2>📖 كيفية الاستخدام - How to Use</h2>
+            <ul>
+                <li>
+                    <span class="gesture-icon">☝️</span>
+                    <span><strong>Pointing Index</strong> - اختر الملف الأول (Select Profile 1)</span>
+                </li>
+                <li>
+                    <span class="gesture-icon">✌️</span>
+                    <span><strong>Victory Sign</strong> - اختر الملف الثاني (Select Profile 2)</span>
+                </li>
+                <li>
+                    <span class="gesture-icon">🖖</span>
+                    <span><strong>Three Fingers</strong> - اختر الملف الثالث (Select Profile 3)</span>
+                </li>
+                <li>
+                    <span class="gesture-icon">👌</span>
+                    <span><strong>OK Sign</strong> - إنشاء ملف جديد (Create New Profile)</span>
+                </li>
+                <li>
+                    <span class="gesture-icon">👍</span>
+                    <span><strong>Thumbs Up</strong> - تأكيد الاختيار (Confirm Selection)</span>
+                </li>
+                <li>
+                    <span class="gesture-icon">👎</span>
+                    <span><strong>Thumbs Down</strong> - العودة للصفحة الرئيسية (Back to Home)</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        let selectedProfileIndex = 0;  // Start with first profile highlighted
+        let confirmationTimeout = null;
+        let totalProfiles = {{ profiles|length }};
+        
+        console.log('✅ Profile selection page - Universal gestures active');
+
+        function highlightProfile(index) {
+            // Clear existing selection
+            document.querySelectorAll('.profile-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Find and highlight the profile card
+            let selectedCard;
+            if (index === 'new') {
+                selectedCard = document.getElementById('createNewProfile');
+            } else {
+                selectedCard = document.querySelector(`.profile-card[data-index="${index}"]`);
+            }
+
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+                selectedProfileIndex = index;
+
+                // Show notification
+                const profileName = index === 'new' ? 'إنشاء ملف جديد' : selectedCard.querySelector('.profile-name')?.textContent || 'Profile';
+                showNotification(`▶️ محدد: ${profileName}`);
+            }
+        }
+        
+        function navigateProfiles(direction) {
+            const profileCards = document.querySelectorAll('.profile-card');
+            let currentIndex = selectedProfileIndex === 'new' ? profileCards.length - 1 : selectedProfileIndex;
+            
+            if (direction === 'right') {
+                currentIndex = (currentIndex + 1) % profileCards.length;
+            } else {
+                currentIndex = (currentIndex - 1 + profileCards.length) % profileCards.length;
+            }
+            
+            // Check if it's the "new profile" card
+            const newIndex = (currentIndex === profileCards.length - 1) ? 'new' : currentIndex;
+            highlightProfile(newIndex);
+        }
+
+        function confirmSelection() {
+            if (selectedProfileIndex === null) return;
+
+            if (selectedProfileIndex === 'new') {
+                // Navigate to profile creation
+                showNotification('🔄 جاري الانتقال...');
+                setTimeout(() => {
+                    window.location.href = '/profile/create/';
+                }, 500);
+            } else {
+                // Get selected profile
+                const selectedCard = document.querySelector(`.profile-card[data-index="${selectedProfileIndex}"]`);
+                const profileId = selectedCard?.dataset.profileId;
+
+                if (profileId) {
+                    // Store selected profile in session storage
+                    sessionStorage.setItem('selectedProfile', profileId);
+                    
+                    showNotification('✅ تم! جاري الانتقال للخدمات...');
+                    setTimeout(() => {
+                        window.location.href = '/services/';
+                    }, 500);
+                }
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Define page-specific gesture context
+        window.currentGestureContext = {
+            // Direct profile selection gestures
+            pointing_index: () => {
+                highlightProfile(0);
+                showNotification('☝️ الملف الأول محدد');
+            },
+            victory_sign: () => {
+                highlightProfile(1);
+                showNotification('✌️ الملف الثاني محدد');
+            },
+            three_fingers: () => {
+                highlightProfile(2);
+                showNotification('🖖 الملف الثالث محدد');
+            },
+            ok_sign: () => {
+                highlightProfile('new');
+                showNotification('👌 إنشاء ملف جديد محدد');
+            },
+            // Confirmation gestures
+            thumbs_up: () => {
+                confirmSelection();
+            },
+            thumbs_down: () => {
+                showNotification('👎 العودة للصفحة الرئيسية...');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 500);
+            },
+            // Keep open hand for backward compatibility (select current)
+            open_hand: () => {
+                confirmSelection();
+            },
+            // Closed fist for back
+            closed_fist: () => {
+                window.location.href = '/';
+            }
+        };
+        
+        console.log('✅ Profile page context-specific gestures loaded:', Object.keys(window.currentGestureContext));
+        
+        // Custom gesture names for profile page
+        const PROFILE_GESTURE_NAMES = {
+            'pointing_index': '☝️ إصبع مشير - الملف الأول',
+            'victory_sign': '✌️ علامة النصر - الملف الثاني',
+            'three_fingers': '🖖 ثلاثة أصابع - الملف الثالث',
+            'ok_sign': '👌 إشارة موافق - ملف جديد',
+            'thumbs_up': '👍 إبهام لأعلى - تأكيد',
+            'thumbs_down': '👎 إبهام لأسفل - رجوع',
+            'open_hand': '🖐️ يد مفتوحة - تأكيد',
+            'closed_fist': '✊ قبضة مغلقة - رجوع'
+        };
+
+        // Override gesture display update for this page
+        window.customUpdateGestureDisplay = function(gesture, confidence) {
+            const gestureValueElement = document.getElementById('gestureValue');
+            if (!gestureValueElement) return;
+
+            if (gesture && confidence >= 0.5) {
+                const displayName = PROFILE_GESTURE_NAMES[gesture] || gesture;
+                gestureValueElement.textContent = displayName;
+                gestureValueElement.style.color = 'var(--success-green)';
+            } else {
+                gestureValueElement.textContent = 'جاري البحث عن إيماءات...';
+                gestureValueElement.style.color = 'var(--text-secondary)';
+            }
+        };
+
+        // Update camera panel instructions for this page
+        function updateCameraPanelInstructions() {
+            const instructionsList = document.getElementById('gestureInstructions');
+            if (instructionsList) {
+                instructionsList.innerHTML = `
+                    <li><strong>☝️ إصبع مشير:</strong> اختيار الملف الأول</li>
+                    <li><strong>✌️ علامة النصر:</strong> اختيار الملف الثاني</li>
+                    <li><strong>🖖 ثلاثة أصابع:</strong> اختيار الملف الثالث</li>
+                    <li><strong>👌 إشارة موافق:</strong> إنشاء ملف جديد</li>
+                    <li><strong>👍 إبهام لأعلى:</strong> تأكيد الاختيار</li>
+                    <li><strong>👎 إبهام لأسفل:</strong> العودة للصفحة الرئيسية</li>
+                `;
+                console.log('✅ Camera panel instructions updated for profile selection');
+            }
+        }
+
+        // Initialize camera on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[Profile Selection] Page loaded');
+            
+            // Update camera panel instructions
+            updateCameraPanelInstructions();
+            
+            // Highlight first profile
+            highlightProfile(0);
+            
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('👋 مرحباً! ☝️✌️🖖👌 للاختيار، 👍 للتأكيد');
+            }, 500);
+            
+            // Auto-start camera for gesture detection
+            setTimeout(() => {
+                const toggleBtn = document.getElementById('toggleCamera');
+                if (toggleBtn) {
+                    toggleBtn.click();
+                    console.log('🎥 Camera auto-started for profile selection');
+                } else {
+                    console.error('❌ Camera toggle button not found');
+                }
+            }, 1500);
+        });
+    </script>
+{% endblock %}
+

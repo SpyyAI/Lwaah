@@ -1,0 +1,288 @@
+{% extends 'lowaah_app/base.html' %}
+{% load static %}
+
+{% block title %}Gesture Guide | Lowaah{% endblock %}
+
+{% block extra_css %}
+<style>
+    .gesture-help-page {
+        padding: 2rem 0;
+    }
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .page-header h1 {
+        color: var(--primary-green);
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .page-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+    
+    .gesture-categories {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .gesture-category {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .gesture-category h2 {
+        color: var(--primary-green);
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .gestures-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .gesture-card {
+        background: linear-gradient(135deg, #f6f9fc 0%, #ffffff 100%);
+        border: 2px solid #e0e7ef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .gesture-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 104, 55, 0.15);
+        border-color: var(--primary-green);
+    }
+    
+    .gesture-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .gesture-card h3 {
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .gesture-action {
+        color: var(--primary-green);
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .gesture-desc {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+    
+    .universal-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #006837 0%, #004d28 100%);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+    
+    .tips-section {
+        background: linear-gradient(135deg, #006837 0%, #004d28 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .tips-section h2 {
+        color: white;
+        margin-bottom: 1rem;
+    }
+    
+    .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .tip-item {
+        background: rgba(255,255,255,0.1);
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    
+    .tip-item i {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="gesture-help-page">
+    <div class="container">
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-hand-paper"></i>
+                دليل الإيماءات - Gesture Guide
+            </h1>
+            <p>نظام إيماءات واحد وواضح - لا تعارضات!</p>
+            <p>One Universal System - No Conflicts!</p>
+        </div>
+
+        <div class="gesture-categories">
+            <!-- Navigation Gestures -->
+            <div class="gesture-category">
+                <h2><i class="fas fa-compass"></i> إيماءات التنقل الرئيسية - Main Navigation</h2>
+                <div class="gestures-grid">
+                    <div class="gesture-card">
+                        <div class="gesture-icon">🖐️</div>
+                        <h3>يد مفتوحة - Open Palm</h3>
+                        <p class="gesture-action">الخدمات - Go to Services</p>
+                        <p class="gesture-desc">افتح جميع الأصابع مع الإبهام - All fingers spread with thumb</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                    
+                    <div class="gesture-card">
+                        <div class="gesture-icon">🤘</div>
+                        <h3>إشارة الروك - Rock Sign</h3>
+                        <p class="gesture-action">المخالفات - Open Violations</p>
+                        <p class="gesture-desc">الخنصر والسبابة لأعلى، الباقي لأسفل - Pinky and index up, others down</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                    
+                    <div class="gesture-card">
+                        <div class="gesture-icon">✌️</div>
+                        <h3>علامة النصر - V Sign</h3>
+                        <p class="gesture-action">أبشر أفراد - Go to Absher</p>
+                        <p class="gesture-desc">السبابة والوسطى للأعلى - Index + middle up</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                    
+                    <div class="gesture-card">
+                        <div class="gesture-icon">👌</div>
+                        <h3>إشارة موافق - OK Sign</h3>
+                        <p class="gesture-action">الملف الشخصي - Open Profile</p>
+                        <p class="gesture-desc">الإبهام والسبابة يلمسان - Thumb + index touching</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                    
+                    <div class="gesture-card">
+                        <div class="gesture-icon">🖖</div>
+                        <h3>ثلاثة أصابع - Three Fingers</h3>
+                        <p class="gesture-action">المساعدة - Show Help</p>
+                        <p class="gesture-desc">السبابة + الوسطى + البنصر - Index + middle + ring up</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Gestures -->
+            <div class="gesture-category">
+                <h2><i class="fas fa-check-circle"></i> إيماءات الإجراءات - Action Gestures</h2>
+                <div class="gestures-grid">
+                    <div class="gesture-card">
+                        <div class="gesture-icon">👍</div>
+                        <h3>إبهام للأعلى - Thumbs Up</h3>
+                        <p class="gesture-action">التالي / إرسال - Next / Submit</p>
+                        <p class="gesture-desc">إبهام للأعلى، أصابع مغلقة - Thumb up, fingers closed</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                    
+                    <div class="gesture-card">
+                        <div class="gesture-icon">👎</div>
+                        <h3>إبهام للأسفل - Thumbs Down</h3>
+                        <p class="gesture-action">رجوع / إلغاء - Back / Cancel</p>
+                        <p class="gesture-desc">إبهام للأسفل، أصابع مغلقة - Thumb down, fingers closed</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                    
+                    <div class="gesture-card">
+                        <div class="gesture-icon">☝️</div>
+                        <h3>إصبع مشير - Pointing Index</h3>
+                        <p class="gesture-action">تحديد - Select Card</p>
+                        <p class="gesture-desc">السبابة فقط للأعلى - Only index finger up</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Navigation -->
+            <div class="gesture-category">
+                <h2><i class="fas fa-arrows-alt-h"></i> التصفح - Browse Navigation</h2>
+                <div class="gestures-grid">
+                    <div class="gesture-card">
+                        <div class="gesture-icon">👉</div>
+                        <h3>مسح لليمين - Swipe Right</h3>
+                        <p class="gesture-action">العنصر التالي - Navigate Right</p>
+                        <p class="gesture-desc">حرك اليد لليمين - Move hand to the right</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                    
+                    <div class="gesture-card">
+                        <div class="gesture-icon">👈</div>
+                        <h3>مسح لليسار - Swipe Left</h3>
+                        <p class="gesture-action">العنصر السابق - Navigate Left</p>
+                        <p class="gesture-desc">حرك اليد لليسار - Move hand to the left</p>
+                        <span class="universal-badge">🌐 عام - Universal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips-section">
+            <h2><i class="fas fa-lightbulb"></i> نصائح مهمة - Important Tips</h2>
+            <div class="tips-grid">
+                <div class="tip-item">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>نفس الإيماءة = نفس الإجراء</strong><br>
+                    Same gesture = Same action everywhere
+                </div>
+                <div class="tip-item">
+                    <i class="fas fa-redo"></i>
+                    <strong>كرر الإيماءة مرتين</strong><br>
+                    Hold gesture for 2 detections
+                </div>
+                <div class="tip-item">
+                    <i class="fas fa-clock"></i>
+                    <strong>انتظر 3 ثوان بين الإيماءات</strong><br>
+                    Wait 3 seconds between gestures
+                </div>
+                <div class="tip-item">
+                    <i class="fas fa-hand-paper"></i>
+                    <strong>افتح يدك بوضوح</strong><br>
+                    Make gestures clearly visible
+                </div>
+                <div class="tip-item">
+                    <i class="fas fa-sun"></i>
+                    <strong>إضاءة جيدة مهمة</strong><br>
+                    Good lighting is important
+                </div>
+                <div class="tip-item">
+                    <i class="fas fa-video"></i>
+                    <strong>وجه يدك للكاميرا</strong><br>
+                    Face your hand to camera
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

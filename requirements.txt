@@ -1,0 +1,29 @@
+# Lowaah - Saudi Sign Language Assistant
+# Django Web Application with AI Gesture Detection
+
+# Core Framework
+Django==5.0.1
+djangorestframework==3.14.0
+
+# AI and Computer Vision
+mediapipe==0.10.14
+opencv-python==4.9.0.80
+scikit-learn==1.4.0
+numpy==1.26.3
+tensorflow==2.15.0  # For LSTM sequence recognition
+keras==2.15.0  # Deep learning framework
+
+# NLP and Text Processing
+pytesseract==0.3.10  # OCR for card scanning
+
+# Utilities
+Pillow==10.2.0
+pickle-mixin==1.0.2
+
+# Production Server (Optional)
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Development Tools (Optional)
+ipython==8.20.0
+

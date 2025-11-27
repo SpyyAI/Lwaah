@@ -1,0 +1,649 @@
+{% extends 'lowaah_app/base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title|default:"إنشاء ملف شخصي - Lowaah" }}{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .profile-create-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .steps-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .step-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .step-title {
+            font-size: 32px;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .step-subtitle {
+            font-size: 18px;
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .option-card {
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .option-card.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+
+        .option-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .option-text {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .gesture-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .gesture-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gesture-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .gesture-button.back {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+
+        .gesture-button.submit {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .instructions {
+            background: #f0f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 5px solid #3b82f6;
+        }
+
+        .instructions h3 {
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e3a8a;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        
+        .home-button {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            background: linear-gradient(135deg, #006837 0%, #004d28 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 104, 55, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 104, 55, 0.4);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Home Button -->
+    <a href="/" class="home-button">
+        <i class="fas fa-home"></i>
+        <span>الرئيسية</span>
+    </a>
+
+    <div class="profile-create-container">
+        <div class="page-header">
+            <h1>➕ إنشاء ملف شخصي جديد</h1>
+            <p class="subtitle">Create New Profile</p>
+        </div>
+
+        <div class="steps-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+
+            <!-- Step 1: Name -->
+            <div class="step active" data-step="1">
+                <div class="step-header">
+                    <div class="step-icon">👤</div>
+                    <div class="step-title">ما اسمك؟</div>
+                    <div class="step-subtitle">What's Your Name?</div>
+                </div>
+                <div class="form-group">
+                    <label for="fullName">الاسم الكامل - Full Name</label>
+                    <input type="text" id="fullName" placeholder="محمد أحمد" dir="rtl">
+                </div>
+                <div class="instructions">
+                    <h3>📖 ملاحظة - Note</h3>
+                    <ul>
+                        <li>✏️ اكتب اسمك الكامل (يمكن استخدام لوحة المفاتيح)</li>
+                        <li>👍 <strong>Thumbs Up</strong> للمتابعة</li>
+                    </ul>
+                </div>
+                <div class="gesture-buttons">
+                    <button class="gesture-button" onclick="nextStep()">
+                        <span>👍</span>
+                        <span>التالي - Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: National ID -->
+            <div class="step" data-step="2">
+                <div class="step-header">
+                    <div class="step-icon">🆔</div>
+                    <div class="step-title">رقم الهوية الوطنية</div>
+                    <div class="step-subtitle">National ID Number</div>
+                </div>
+                <div class="form-group">
+                    <label for="nationalId">رقم الهوية (10 أرقام)</label>
+                    <input type="text" id="nationalId" placeholder="1234567890" maxlength="10" pattern="[0-9]{10}">
+                </div>
+                <div class="instructions">
+                    <h3>📖 ملاحظة - Note</h3>
+                    <ul>
+                        <li>🔢 أدخل 10 أرقام فقط</li>
+                        <li>👍 <strong>Thumbs Up</strong> للمتابعة</li>
+                        <li>👎 <strong>Thumbs Down</strong> للرجوع</li>
+                    </ul>
+                </div>
+                <div class="gesture-buttons">
+                    <button class="gesture-button back" onclick="prevStep()">
+                        <span>👎</span>
+                        <span>رجوع - Back</span>
+                    </button>
+                    <button class="gesture-button" onclick="nextStep()">
+                        <span>👍</span>
+                        <span>التالي - Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Car Icon -->
+            <div class="step" data-step="3">
+                <div class="step-header">
+                    <div class="step-icon">🚗</div>
+                    <div class="step-title">اختر أيقونة سيارتك</div>
+                    <div class="step-subtitle">Choose Your Car Icon</div>
+                </div>
+                <div class="options-grid" id="carIconGrid">
+                    <div class="option-card" data-value="🚗" onclick="selectOption('carIcon', '🚗', this)">
+                        <div class="option-icon">🚗</div>
+                        <div class="option-text">سيارة</div>
+                    </div>
+                    <div class="option-card" data-value="🚙" onclick="selectOption('carIcon', '🚙', this)">
+                        <div class="option-icon">🚙</div>
+                        <div class="option-text">SUV</div>
+                    </div>
+                    <div class="option-card" data-value="🚕" onclick="selectOption('carIcon', '🚕', this)">
+                        <div class="option-icon">🚕</div>
+                        <div class="option-text">تاكسي</div>
+                    </div>
+                    <div class="option-card" data-value="🚐" onclick="selectOption('carIcon', '🚐', this)">
+                        <div class="option-icon">🚐</div>
+                        <div class="option-text">فان</div>
+                    </div>
+                    <div class="option-card" data-value="🚚" onclick="selectOption('carIcon', '🚚', this)">
+                        <div class="option-icon">🚚</div>
+                        <div class="option-text">شاحنة</div>
+                    </div>
+                    <div class="option-card" data-value="🏎️" onclick="selectOption('carIcon', '🏎️', this)">
+                        <div class="option-icon">🏎️</div>
+                        <div class="option-text">رياضية</div>
+                    </div>
+                </div>
+                <div class="instructions">
+                    <h3>📖 ملاحظة - Note</h3>
+                    <ul>
+                        <li>👆 اضغط على الأيقونة المناسبة</li>
+                        <li>👍 <strong>Thumbs Up</strong> للمتابعة</li>
+                    </ul>
+                </div>
+                <div class="gesture-buttons">
+                    <button class="gesture-button back" onclick="prevStep()">
+                        <span>👎</span>
+                        <span>رجوع - Back</span>
+                    </button>
+                    <button class="gesture-button" onclick="nextStep()">
+                        <span>👍</span>
+                        <span>التالي - Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: License Plate -->
+            <div class="step" data-step="4">
+                <div class="step-header">
+                    <div class="step-icon">🔢</div>
+                    <div class="step-title">رقم اللوحة</div>
+                    <div class="step-subtitle">License Plate Number</div>
+                </div>
+                <div class="form-group">
+                    <label for="plateNumber">رقم اللوحة - Plate Number</label>
+                    <input type="text" id="plateNumber" placeholder="ABC 1234">
+                </div>
+                <div class="form-group">
+                    <label for="plateLetters">الحروف العربية - Arabic Letters</label>
+                    <input type="text" id="plateLetters" placeholder="ا ب ج" dir="rtl">
+                </div>
+                <div class="instructions">
+                    <h3>📖 ملاحظة - Note</h3>
+                    <ul>
+                        <li>✏️ أدخل رقم ولوحة سيارتك</li>
+                        <li>👍 <strong>Thumbs Up</strong> للحفظ والإنهاء</li>
+                    </ul>
+                </div>
+                <div class="gesture-buttons">
+                    <button class="gesture-button back" onclick="prevStep()">
+                        <span>👎</span>
+                        <span>رجوع - Back</span>
+                    </button>
+                    <button class="gesture-button submit" onclick="submitProfile()">
+                        <span>✅</span>
+                        <span>حفظ - Save</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 5: Success -->
+            <div class="step" data-step="5">
+                <div class="step-header">
+                    <div class="step-icon">✅</div>
+                    <div class="step-title">تم الإنشاء بنجاح!</div>
+                    <div class="step-subtitle">Profile Created Successfully!</div>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <p style="font-size: 24px; color: #64748b; margin-bottom: 30px;">
+                        يمكنك الآن استخدام ملفك الشخصي للوصول إلى الخدمات
+                    </p>
+                    <button class="gesture-button" onclick="window.location.href='/services/'">
+                        <span>🏠</span>
+                        <span>الذهاب للخدمات - Go to Services</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+        const profileData = {
+            fullName: '',
+            nationalId: '',
+            carIcon: '🚗',
+            plateNumber: '',
+            plateLetters: ''
+        };
+
+        function nextStep() {
+            // Validate current step
+            if (!validateStep(currentStep)) {
+                return;
+            }
+
+            // Save current step data
+            saveStepData(currentStep);
+
+            // Move to next step
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+                updateProgress();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                updateProgress();
+            }
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+        }
+
+        function updateProgress() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function validateStep(step) {
+            switch(step) {
+                case 1:
+                    const fullName = document.getElementById('fullName').value.trim();
+                    if (!fullName) {
+                        showNotification('⚠️ الرجاء إدخال الاسم الكامل');
+                        return false;
+                    }
+                    return true;
+
+                case 2:
+                    const nationalId = document.getElementById('nationalId').value.trim();
+                    if (!/^\d{10}$/.test(nationalId)) {
+                        showNotification('⚠️ رقم الهوية يجب أن يكون 10 أرقام');
+                        return false;
+                    }
+                    return true;
+
+                case 3:
+                    if (!profileData.carIcon) {
+                        showNotification('⚠️ الرجاء اختيار أيقونة السيارة');
+                        return false;
+                    }
+                    return true;
+
+                case 4:
+                    const plateNumber = document.getElementById('plateNumber').value.trim();
+                    const plateLetters = document.getElementById('plateLetters').value.trim();
+                    if (!plateNumber || !plateLetters) {
+                        showNotification('⚠️ الرجاء إدخال رقم اللوحة والحروف');
+                        return false;
+                    }
+                    return true;
+
+                default:
+                    return true;
+            }
+        }
+
+        function saveStepData(step) {
+            switch(step) {
+                case 1:
+                    profileData.fullName = document.getElementById('fullName').value.trim();
+                    break;
+                case 2:
+                    profileData.nationalId = document.getElementById('nationalId').value.trim();
+                    break;
+                case 4:
+                    profileData.plateNumber = document.getElementById('plateNumber').value.trim();
+                    profileData.plateLetters = document.getElementById('plateLetters').value.trim();
+                    break;
+            }
+        }
+
+        function selectOption(field, value, element) {
+            // Remove selected class from all options in this group
+            element.parentElement.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selected class to clicked option
+            element.classList.add('selected');
+
+            // Save value
+            profileData[field] = value;
+
+            showNotification(`✅ تم اختيار: ${value}`);
+        }
+
+        async function submitProfile() {
+            if (!validateStep(4)) {
+                return;
+            }
+
+            saveStepData(4);
+
+            showNotification('⏳ جاري الحفظ...');
+
+            try {
+                // Generate profile ID from national ID
+                profileData.profile_id = profileData.nationalId;
+
+                // Create profile
+                const profileResponse = await fetch('/api/profile/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        profile_id: profileData.profile_id,
+                        full_name: profileData.fullName,
+                        national_id: profileData.nationalId
+                    })
+                });
+
+                const profileResult = await profileResponse.json();
+                
+                if (!profileResponse.ok || !profileResult.success) {
+                    console.error('Profile creation error:', profileResult);
+                    throw new Error(profileResult.error || 'Failed to create profile');
+                }
+
+                // Add car plate
+                const carResponse = await fetch(`/api/profile/${profileData.profile_id}/add-car/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        plate_number: profileData.plateNumber,
+                        plate_letters: profileData.plateLetters,
+                        car_icon: profileData.carIcon,
+                        is_primary: true
+                    })
+                });
+
+                const carResult = await carResponse.json();
+                
+                if (!carResponse.ok || !carResult.success) {
+                    console.error('Car plate error:', carResult);
+                    throw new Error(carResult.error || 'Failed to add car plate');
+                }
+
+                // Store selected profile
+                sessionStorage.setItem('selectedProfile', profileData.profile_id);
+
+                showNotification('✅ تم الحفظ بنجاح!');
+
+                // Show success step
+                currentStep = 5;
+                showStep(5);
+                updateProgress();
+
+            } catch (error) {
+                console.error('Error creating profile:', error);
+                showNotification(`❌ حدث خطأ: ${error.message}`);
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProgress();
+            showNotification('👋 مرحباً! لنبدأ بإنشاء ملفك الشخصي');
+        });
+    </script>
+{% endblock %}
+

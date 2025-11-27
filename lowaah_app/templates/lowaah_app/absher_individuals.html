@@ -1,0 +1,124 @@
+{% extends 'lowaah_app/base.html' %}
+
+{% block title %}أبشر أفراد - Absher Individuals | Lowaah{% endblock %}
+
+{% block content %}
+<section class="absher-individuals-page">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-user"></i>
+            أبشر أفراد - Absher Individuals
+        </h1>
+        <p>الخدمات الإلكترونية للأفراد - Electronic Services for Individuals</p>
+    </div>
+
+    <div class="categories-grid">
+        <div class="category-card">
+            <div class="category-icon" style="background: #006837;">
+                <i class="fas fa-passport"></i>
+            </div>
+            <h3>خدمات الجوازات</h3>
+            <p>Passport Services</p>
+            <ul>
+                <li>إصدار جواز سفر</li>
+                <li>تجديد جواز سفر</li>
+                <li>استعلام عن جواز السفر</li>
+            </ul>
+            <button class="btn-service">الدخول للخدمة</button>
+        </div>
+
+        <div class="category-card">
+            <div class="category-icon" style="background: #d32f2f;">
+                <i class="fas fa-car"></i>
+            </div>
+            <h3>خدمات المرور</h3>
+            <p>Traffic Services</p>
+            <ul>
+                <li>رخصة القيادة</li>
+                <li>استمارة المركبة</li>
+                <li>المخالفات المرورية</li>
+            </ul>
+            <button class="btn-service">الدخول للخدمة</button>
+        </div>
+
+        <div class="category-card">
+            <div class="category-icon" style="background: #1976d2;">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h3>خدمات الأحوال المدنية</h3>
+            <p>Civil Affairs Services</p>
+            <ul>
+                <li>تجديد الهوية الوطنية</li>
+                <li>شهادة الميلاد</li>
+                <li>السجل المدني</li>
+            </ul>
+            <button class="btn-service">الدخول للخدمة</button>
+        </div>
+
+        <div class="category-card">
+            <div class="category-icon" style="background: #f57c00;">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3>خدمات التابعين</h3>
+            <p>Dependents Services</p>
+            <ul>
+                <li>إضافة تابع</li>
+                <li>تجديد إقامة تابع</li>
+                <li>نقل كفالة</li>
+            </ul>
+            <button class="btn-service">الدخول للخدمة</button>
+        </div>
+
+        <div class="category-card">
+            <div class="category-icon" style="background: #7b1fa2;">
+                <i class="fas fa-plane-departure"></i>
+            </div>
+            <h3>خدمات السفر</h3>
+            <p>Travel Services</p>
+            <ul>
+                <li>طلب خروج وعودة</li>
+                <li>طلب خروج نهائي</li>
+                <li>استعلام عن طلب</li>
+            </ul>
+            <button class="btn-service">الدخول للخدمة</button>
+        </div>
+
+        <div class="category-card">
+            <div class="category-icon" style="background: #388e3c;">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h3>الوثائق والشهادات</h3>
+            <p>Documents & Certificates</p>
+            <ul>
+                <li>شهادة عدم محكومية</li>
+                <li>حسن السيرة والسلوك</li>
+                <li>صورة من الهوية</li>
+            </ul>
+            <button class="btn-service">الدخول للخدمة</button>
+        </div>
+    </div>
+
+    <div class="featured-section">
+        <h3><i class="fas fa-star"></i> خدمات مميزة - Featured Services</h3>
+        <div class="featured-grid">
+            <a href="{% url 'lowaah_app:violations' %}" class="featured-item">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>المخالفات المرورية</span>
+            </a>
+            <a href="{% url 'lowaah_app:id_renewal' %}" class="featured-item">
+                <i class="fas fa-id-card"></i>
+                <span>تجديد الهوية</span>
+            </a>
+            <a href="#" class="featured-item">
+                <i class="fas fa-passport"></i>
+                <span>إصدار جواز السفر</span>
+            </a>
+            <a href="#" class="featured-item">
+                <i class="fas fa-car"></i>
+                <span>رخصة القيادة</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

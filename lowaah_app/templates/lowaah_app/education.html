@@ -1,0 +1,499 @@
+{% extends 'lowaah_app/base.html' %}
+
+{% block title %}الخدمات التعليمية - Education | Lowaah{% endblock %}
+
+{% block content %}
+<section class="education-page">
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-graduation-cap"></i>
+            الخدمات التعليمية - Education Services
+        </h1>
+        <p>خدمات التعليم والشهادات - Education and certificate services</p>
+    </div>
+
+    <!-- Service Selection -->
+    <div class="services-selection" id="serviceSelection">
+        <h3 style="text-align: center; margin-bottom: 30px;">اختر الخدمة - Select Service</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div class="service-option-card" onclick="selectService('certificate')">
+                <div class="service-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h4>طلب شهادة</h4>
+                <p>Request Certificate</p>
+                <div class="service-desc">طلب شهادة دراسية أو تخرج</div>
+            </div>
+
+            <div class="service-option-card" onclick="selectService('admission')">
+                <div class="service-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <i class="fas fa-university"></i>
+                </div>
+                <h4>القبول الجامعي</h4>
+                <p>University Admission</p>
+                <div class="service-desc">التقديم على الجامعات</div>
+            </div>
+
+            <div class="service-option-card" onclick="selectService('transcript')">
+                <div class="service-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h4>كشف الدرجات</h4>
+                <p>Transcript</p>
+                <div class="service-desc">طلب كشف درجات رسمي</div>
+            </div>
+
+            <div class="service-option-card" onclick="selectService('verification')">
+                <div class="service-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4>توثيق الشهادات</h4>
+                <p>Certificate Verification</p>
+                <div class="service-desc">توثيق وتصديق الشهادات</div>
+            </div>
+
+            <div class="service-option-card" onclick="selectService('scholarship')">
+                <div class="service-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <h4>المنح الدراسية</h4>
+                <p>Scholarships</p>
+                <div class="service-desc">التقديم على المنح الدراسية</div>
+            </div>
+
+            <div class="service-option-card" onclick="selectService('equivalency')">
+                <div class="service-icon" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <h4>معادلة الشهادات</h4>
+                <p>Certificate Equivalency</p>
+                <div class="service-desc">معادلة الشهادات الأجنبية</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Form Container -->
+    <div class="form-container" id="serviceForm" style="display: none;">
+        <div class="form-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="formTitle"></h3>
+                <button type="button" class="btn-secondary" onclick="backToSelection()" style="padding: 8px 15px;">
+                    <i class="fas fa-arrow-right"></i>
+                    رجوع
+                </button>
+            </div>
+            
+            <form id="educationForm">
+                <input type="hidden" id="serviceType">
+                <div id="formContent"></div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i>
+                        <span id="submitButtonText">تقديم الطلب - Submit</span>
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="window.location.href='{% url 'lowaah_app:services' %}'">
+                        <i class="fas fa-arrow-right"></i>
+                        رجوع للخدمات - Back
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="info-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+        <h4><i class="fas fa-info-circle"></i> معلومات هامة - Important Information</h4>
+        <ul>
+            <li>📋 جميع الخدمات متصلة بوزارة التعليم</li>
+            <li>🔐 البيانات محمية ومشفرة بالكامل</li>
+            <li>⏱️ مدة معالجة الطلبات: 3-7 أيام عمل</li>
+            <li>📱 تصلك إشعارات بحالة طلبك عبر الرسائل النصية</li>
+            <li>📄 يمكنك طباعة الشهادات إلكترونياً بعد الموافقة</li>
+        </ul>
+    </div>
+
+    <div class="info-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
+        <h4><i class="fas fa-university"></i> الجامعات المشاركة - Participating Universities</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+            <div style="background: white; padding: 15px; border-radius: 10px;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎓</div>
+                <strong>جامعة الملك سعود</strong>
+                <div style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">King Saud University</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎓</div>
+                <strong>جامعة الملك عبدالعزيز</strong>
+                <div style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">King Abdulaziz University</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎓</div>
+                <strong>جامعة الملك فهد</strong>
+                <div style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">King Fahd University</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px;">
+                <div style="font-size: 24px; margin-bottom: 10px;">🎓</div>
+                <strong>جامعة الأميرة نورة</strong>
+                <div style="font-size: 0.9em; opacity: 0.8; margin-top: 5px;">Princess Nourah University</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.service-option-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.service-option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    border-color: var(--primary-color);
+}
+
+.service-option-card .service-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+}
+
+.service-option-card h4 {
+    font-size: 1.2em;
+    margin: 15px 0 5px;
+    color: var(--text-primary);
+}
+
+.service-option-card p {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.service-option-card .service-desc {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-top: 10px;
+}
+</style>
+
+<script>
+const serviceConfigs = {
+    'certificate': {
+        title: 'طلب شهادة - Request Certificate',
+        icon: '📜',
+        fields: `
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> رقم الهوية - National ID</label>
+                <input type="text" placeholder="1234567890" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> الاسم الكامل - Full Name</label>
+                <input type="text" placeholder="أحمد محمد علي" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-school"></i> المؤسسة التعليمية - Educational Institution</label>
+                <input type="text" placeholder="اسم المدرسة أو الجامعة" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-certificate"></i> نوع الشهادة - Certificate Type</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>شهادة ثانوية - High School</option>
+                    <option>دبلوم - Diploma</option>
+                    <option>بكالوريوس - Bachelor</option>
+                    <option>ماجستير - Master</option>
+                    <option>دكتوراه - PhD</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> سنة التخرج - Graduation Year</label>
+                <input type="number" placeholder="2025" min="1980" max="2025" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-file-alt"></i> الغرض من الطلب - Purpose</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>التوظيف - Employment</option>
+                    <option>القبول الجامعي - University Admission</option>
+                    <option>الدراسة بالخارج - Study Abroad</option>
+                    <option>أخرى - Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> رقم الجوال - Mobile</label>
+                <input type="tel" placeholder="05xxxxxxxx" required>
+            </div>
+        `
+    },
+    'admission': {
+        title: 'القبول الجامعي - University Admission',
+        icon: '🎓',
+        fields: `
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> رقم الهوية - National ID</label>
+                <input type="text" placeholder="1234567890" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> الاسم الكامل - Full Name</label>
+                <input type="text" placeholder="أحمد محمد علي" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-university"></i> الجامعة - University</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>جامعة الملك سعود - King Saud University</option>
+                    <option>جامعة الملك عبدالعزيز - King Abdulaziz University</option>
+                    <option>جامعة الملك فهد - King Fahd University</option>
+                    <option>جامعة الأميرة نورة - Princess Nourah University</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-book"></i> التخصص المطلوب - Desired Major</label>
+                <input type="text" placeholder="الهندسة، الطب، الخ" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-percentage"></i> النسبة الموزونة - Weighted Score</label>
+                <input type="number" step="0.01" placeholder="85.50" min="0" max="100" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-percentage"></i> نسبة الثانوية - HS Percentage</label>
+                    <input type="number" step="0.01" placeholder="90.00" min="0" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-pencil-alt"></i> القدرات - Qiyas Score</label>
+                    <input type="number" placeholder="85" min="0" max="100" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> رقم الجوال - Mobile</label>
+                <input type="tel" placeholder="05xxxxxxxx" required>
+            </div>
+        `
+    },
+    'transcript': {
+        title: 'كشف الدرجات - Transcript',
+        icon: '📊',
+        fields: `
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> رقم الهوية - National ID</label>
+                <input type="text" placeholder="1234567890" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-school"></i> المؤسسة التعليمية - Institution</label>
+                <input type="text" placeholder="اسم الجامعة أو المدرسة" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-graduation-cap"></i> المرحلة الدراسية - Education Level</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>ثانوي - High School</option>
+                    <option>بكالوريوس - Bachelor</option>
+                    <option>ماجستير - Master</option>
+                    <option>دكتوراه - PhD</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> السنة الدراسية - Academic Year</label>
+                <input type="text" placeholder="1445-1446" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-file-pdf"></i> التنسيق - Format</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>PDF - ملف PDF</option>
+                    <option>رسمي بختم - Official with Seal</option>
+                    <option>إرسال عبر البريد - Mail Delivery</option>
+                </select>
+            </div>
+        `
+    },
+    'verification': {
+        title: 'توثيق الشهادات - Certificate Verification',
+        icon: '✅',
+        fields: `
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> رقم الهوية - National ID</label>
+                <input type="text" placeholder="1234567890" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-certificate"></i> نوع الشهادة - Certificate Type</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>شهادة جامعية - University Degree</option>
+                    <option>شهادة ثانوية - High School</option>
+                    <option>شهادة خبرة - Experience Certificate</option>
+                    <option>دورات تدريبية - Training Certificates</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-building"></i> الجهة المصدرة - Issuing Authority</label>
+                <input type="text" placeholder="اسم الجامعة أو المؤسسة" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-globe"></i> الغرض من التوثيق - Verification Purpose</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>العمل بالخارج - Work Abroad</option>
+                    <option>الدراسة بالخارج - Study Abroad</option>
+                    <option>الإقامة - Residency</option>
+                    <option>التوظيف - Employment</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> رقم الجوال - Mobile</label>
+                <input type="tel" placeholder="05xxxxxxxx" required>
+            </div>
+        `
+    },
+    'scholarship': {
+        title: 'المنح الدراسية - Scholarships',
+        icon: '🏆',
+        fields: `
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> رقم الهوية - National ID</label>
+                <input type="text" placeholder="1234567890" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> الاسم الكامل - Full Name</label>
+                <input type="text" placeholder="أحمد محمد علي" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-graduation-cap"></i> المرحلة الدراسية - Education Level</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>بكالوريوس - Bachelor</option>
+                    <option>ماجستير - Master</option>
+                    <option>دكتوراه - PhD</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-book"></i> التخصص - Major</label>
+                <input type="text" placeholder="الهندسة، الطب، الخ" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-percentage"></i> المعدل التراكمي - GPA</label>
+                <input type="number" step="0.01" placeholder="4.50" min="0" max="5" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-globe"></i> الدولة المطلوبة - Desired Country</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>الولايات المتحدة - USA</option>
+                    <option>المملكة المتحدة - UK</option>
+                    <option>كندا - Canada</option>
+                    <option>أستراليا - Australia</option>
+                    <option>أخرى - Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-comment"></i> الدافع - Motivation</label>
+                <textarea placeholder="لماذا تستحق المنحة؟" rows="3" required></textarea>
+            </div>
+        `
+    },
+    'equivalency': {
+        title: 'معادلة الشهادات - Certificate Equivalency',
+        icon: '⚖️',
+        fields: `
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> رقم الهوية - National ID</label>
+                <input type="text" placeholder="1234567890" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-certificate"></i> نوع الشهادة - Certificate Type</label>
+                <select required>
+                    <option value="">اختر - Select</option>
+                    <option>شهادة ثانوية - High School</option>
+                    <option>بكالوريوس - Bachelor</option>
+                    <option>ماجستير - Master</option>
+                    <option>دكتوراه - PhD</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-globe"></i> دولة الإصدار - Issuing Country</label>
+                <input type="text" placeholder="مثال: الولايات المتحدة" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-university"></i> الجامعة / المؤسسة - University / Institution</label>
+                <input type="text" placeholder="اسم الجامعة أو المؤسسة" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-book"></i> التخصص - Major</label>
+                <input type="text" placeholder="الهندسة، الطب، الخ" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> سنة التخرج - Graduation Year</label>
+                <input type="number" placeholder="2025" min="1980" max="2025" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> رقم الجوال - Mobile</label>
+                <input type="tel" placeholder="05xxxxxxxx" required>
+            </div>
+        `
+    }
+};
+
+function selectService(service) {
+    const config = serviceConfigs[service];
+    document.getElementById('serviceSelection').style.display = 'none';
+    document.getElementById('serviceForm').style.display = 'block';
+    document.getElementById('serviceType').value = service;
+    document.getElementById('formTitle').textContent = config.title;
+    document.getElementById('formContent').innerHTML = config.fields;
+}
+
+function backToSelection() {
+    document.getElementById('serviceSelection').style.display = 'block';
+    document.getElementById('serviceForm').style.display = 'none';
+    document.getElementById('educationForm').reset();
+}
+
+document.getElementById('educationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const serviceType = document.getElementById('serviceType').value;
+    const config = serviceConfigs[serviceType];
+    
+    if (typeof visualDialog !== 'undefined') {
+        visualDialog.confirm({
+            icon: config.icon,
+            title: 'تأكيد الطلب',
+            titleEn: 'Confirm Request',
+            message: config.title,
+            onYes: () => {
+                visualDialog.loading({
+                    icon: '⏳',
+                    title: 'جاري معالجة الطلب...',
+                    titleEn: 'Processing Request...'
+                });
+                
+                setTimeout(() => {
+                    visualDialog.close();
+                    window.location.href = '{% url "lowaah_app:success" %}';
+                }, 2000);
+            },
+            onNo: () => {
+                console.log('Request cancelled');
+            }
+        });
+    } else {
+        if (confirm('هل تريد تقديم الطلب؟\nDo you want to submit the request?')) {
+            window.location.href = '{% url "lowaah_app:success" %}';
+        }
+    }
+});
+</script>
+{% endblock %}
